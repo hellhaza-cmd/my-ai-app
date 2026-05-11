@@ -73,7 +73,7 @@ function KeySetup({ onSave }) {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-api-key': k, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 10, messages: [{ role: 'user', content: 'hi' }] })
+        body: JSON.stringify({ model: 'claude-3-5-sonnet-20241022', max_tokens: 10, messages: [{ role: 'user', content: 'hi' }] })
       });
       const data = await res.json();
       if (data.error) { setError('API key rejected: ' + data.error.message); setTesting(false); return; }
@@ -228,7 +228,7 @@ function App() {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 3000, system: SYSTEM, messages: history })
+        body: JSON.stringify({ model: 'claude-3-5-sonnet-20241022', max_tokens: 3000, system: SYSTEM, messages: history })
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error.message);
@@ -307,7 +307,7 @@ function App() {
         <div style={{ display:'flex', alignItems:'center', gap:10, padding:'11px 18px', borderBottom:'1px solid #f0ede8', flexShrink:0 }}>
           {!sidebar && <button onClick={() => setSidebar(true)} style={{ background:'none', border:'1px solid #e7e5e0', borderRadius:7, padding:'5px 10px', cursor:'pointer', fontSize:13, color:'#78716c' }}>☰</button>}
           <span style={{ fontSize:14, fontWeight:600, color:'#1c1917', flex:1 }}>{current?.title || 'My AI Assistant'}</span>
-          <span style={{ fontSize:11, background:'#f0ede8', color:'#9a3412', padding:'3px 9px', borderRadius:10, fontWeight:500 }}>Claude Sonnet</span>
+          <span style={{ fontSize:11, background:'#f0ede8', color:'#9a3412', padding:'3px 9px', borderRadius:10, fontWeight:500 }}>Claude 3.5 Sonnet</span>
           <button onClick={() => setShowSettings(true)} title="Settings" style={{ background:'none', border:'1px solid #e7e5e0', borderRadius:7, padding:'5px 9px', cursor:'pointer', fontSize:14, color:'#78716c' }}>⚙️</button>
         </div>
 
@@ -375,7 +375,7 @@ function App() {
               {loading ? <span style={{ width:16, height:16, border:'2px solid #a8a29e', borderTopColor:'transparent', borderRadius:'50%', display:'inline-block', animation:'spin .7s linear infinite' }} /> : '↑'}
             </button>
           </div>
-          <p style={{ textAlign:'center', fontSize:11, color:'#c4b9b0', marginTop:7 }}>Your personal senior dev AI · Powered by Claude Sonnet</p>
+          <p style={{ textAlign:'center', fontSize:11, color:'#c4b9b0', marginTop:7 }}>Your personal senior dev AI · Powered by Claude 3.5 Sonnet</p>
         </div>
       </div>
 
