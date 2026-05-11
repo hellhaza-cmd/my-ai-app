@@ -9,16 +9,17 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f9f7f4; height: 100vh; display: flex; flex-direction: column; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f9f7f4; height: 100vh; }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: #d4cfc9; border-radius: 4px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes blink { 0%,100%{opacity:.3} 50%{opacity:1} }
+    textarea::placeholder { color: #c4b9b0; }
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-
-// ── API key is NEVER in code — stored only in your browser's localStorage ─────
 
 const SYSTEM = `You are a brilliant senior full-stack developer and product strategist acting as a personal AI assistant. Your user is an entrepreneur with great ideas but minimal coding experience. Your job is to:
 - Turn their ideas into real, working apps and code
@@ -28,9 +29,22 @@ const SYSTEM = `You are a brilliant senior full-stack developer and product stra
 - When asked to build something, produce a single complete self-contained HTML file with all CSS and JS inline
 - Be concise but thorough. No filler. High signal.`;
 
+// Models tried in order — app uses whichever works on your account
+const MODELS = [
+  'claude-3-haiku-20240307',
+  'claude-3-5-haiku-20241022',
+  'claude-3-5-sonnet-20241022',
+  'claude-3-sonnet-20240229',
+];
+const HEADERS_FOR = key => ({
+  'Content-Type': 'application/json',
+  'x-api-key': key,
+  'anthropic-version': '2023-06-01',
+  'anthropic-dangerous-direct-browser-access': 'true',
+});
+
 const { useState, useRef, useEffect } = React;
 
-// ── Markdown renderer ─────────────────────────────────────────────────────────
 function md(text) {
   if (!text) return '';
   return text
@@ -40,7 +54,7 @@ function md(text) {
           <span style="color:#7aa2f7;font-family:monospace;font-size:11px">${lang||'code'}</span>
           <button onclick="navigator.clipboard.writeText(this.closest('div').nextSibling.querySelector('code').textContent)" style="background:none;border:1px solid #2a2f45;border-radius:4px;color:#565f89;cursor:pointer;font-size:11px;padding:2px 9px">Copy</button>
         </div>
-        <pre style="background:#0f1117;padding:16px;overflow-x:auto;margin:0;line-height:1.7;color:#cdd6f4;font-family:'Fira Code',monospace;font-size:13px"><code>${code.trim().replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
+        <pre style="background:#0f1117;padding:16px;overflow-x:auto;margin:0;line-height:1.7;color:#cdd6f4;font-family:monospace;font-size:13px"><code>${code.trim().replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
       </div>`)
     .replace(/^### (.+)$/gm,'<h3 style="font-size:15px;font-weight:700;margin:18px 0 6px;color:#1c1917">$1</h3>')
     .replace(/^## (.+)$/gm,'<h2 style="font-size:18px;font-weight:700;margin:22px 0 8px;color:#1c1917;border-bottom:1px solid #e7e5e0;padding-bottom:6px">$1</h2>')
@@ -50,122 +64,118 @@ function md(text) {
     .replace(/`([^`]+)`/g,'<code style="background:#f0ede8;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.85em;color:#9a3412">$1</code>')
     .replace(/^[-*] (.+)$/gm,'<li style="margin:3px 0 3px 18px;line-height:1.7">$1</li>')
     .replace(/^(\d+)\. (.+)$/gm,'<li style="margin:3px 0 3px 18px;line-height:1.7">$2</li>')
-    .replace(/\n\n/g,'<br/><br/>')
-    .replace(/\n/g,'<br/>');
+    .replace(/\n\n/g,'<br/><br/>').replace(/\n/g,'<br/>');
 }
 
-// ── API Key Setup Screen ──────────────────────────────────────────────────────
+// ── Key Setup Screen ──────────────────────────────────────────────────────────
 function KeySetup({ onSave }) {
   const [key, setKey] = useState('');
   const [show, setShow] = useState(false);
   const [error, setError] = useState('');
+  const [status, setStatus] = useState('');
   const [testing, setTesting] = useState(false);
 
   const save = async () => {
     const k = key.trim();
-    if (!k.startsWith('sk-ant-')) {
-      setError('Key should start with sk-ant-  —  check you copied it fully.');
-      return;
+    if (!k.startsWith('sk-ant-')) { setError('Key must start with sk-ant- — copy the full key from console.anthropic.com'); return; }
+    if (k.length < 40) { setError('Key looks incomplete — make sure you copied all of it.'); return; }
+    setTesting(true); setError(''); setStatus('Connecting to Anthropic...');
+    for (const model of MODELS) {
+      setStatus('Testing model: ' + model + '...');
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: HEADERS_FOR(k),
+          body: JSON.stringify({ model, max_tokens: 10, messages: [{ role: 'user', content: 'hi' }] })
+        });
+        const data = await res.json();
+        if (!data.error) {
+          localStorage.setItem('ai_api_key', k);
+          localStorage.setItem('ai_model', model);
+          setStatus(''); setTesting(false);
+          onSave(k, model); return;
+        }
+        const t = data.error.type || '';
+        if (t === 'authentication_error') {
+          setError('Invalid API key. Get a fresh one at console.anthropic.com → API Keys.'); setStatus(''); setTesting(false); return;
+        }
+        if (t === 'billing_error' || (data.error.message||'').includes('credit') || (data.error.message||'').includes('balance')) {
+          setError('💳 No credits. Go to console.anthropic.com → Billing → Add $5 credit, then try again.'); setStatus(''); setTesting(false); return;
+        }
+        if (t === 'not_found_error') {
+          // model not available on this plan, try next model in list
+          continue;
+        }
+        setError('❌ Error: ' + (data.error.message || 'Unknown')); setStatus(''); setTesting(false); return;
+      } catch(e) {
+        setError('Connection failed — check your internet connection.'); setStatus(''); setTesting(false); return;
+      }
     }
-    setTesting(true);
-    setError('');
-    try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': k, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-        body: JSON.stringify({ model: 'claude-3-5-sonnet-20241022', max_tokens: 10, messages: [{ role: 'user', content: 'hi' }] })
-      });
-      const data = await res.json();
-      if (data.error) { setError('API key rejected: ' + data.error.message); setTesting(false); return; }
-      localStorage.setItem('ai_api_key', k);
-      onSave(k);
-    } catch (e) {
-      setError('Connection failed. Check your internet and try again.');
-    }
-    setTesting(false);
+    setError('Could not access any model. Make sure billing is set up: console.anthropic.com → Billing'); setStatus(''); setTesting(false);
   };
 
   return (
-    <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#f9f7f4', padding:20 }}>
-      <div style={{ background:'#fff', borderRadius:18, border:'1px solid #e7e5e0', padding:'36px 32px', maxWidth:440, width:'100%', boxShadow:'0 4px 32px rgba(0,0,0,.07)' }}>
-        {/* Logo */}
-        <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:28 }}>
-          <div style={{ width:42, height:42, borderRadius:12, background:'linear-gradient(135deg,#c96442,#7c3f2b)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-            <span style={{ color:'#fff', fontSize:20 }}>✦</span>
+    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#f9f7f4',padding:20}}>
+      <div style={{background:'#fff',borderRadius:18,border:'1px solid #e7e5e0',padding:'36px 32px',maxWidth:440,width:'100%',boxShadow:'0 4px 32px rgba(0,0,0,.07)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:28}}>
+          <div style={{width:42,height:42,borderRadius:12,background:'linear-gradient(135deg,#c96442,#7c3f2b)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <span style={{color:'#fff',fontSize:20}}>✦</span>
           </div>
           <div>
-            <div style={{ fontSize:18, fontWeight:800, color:'#1c1917', letterSpacing:'-0.03em' }}>My AI Assistant</div>
-            <div style={{ fontSize:12, color:'#a8a29e' }}>Personal senior developer AI</div>
+            <div style={{fontSize:18,fontWeight:800,color:'#1c1917',letterSpacing:'-0.03em'}}>My AI Assistant</div>
+            <div style={{fontSize:12,color:'#a8a29e'}}>Personal senior developer AI</div>
           </div>
         </div>
-
-        <h2 style={{ fontSize:16, fontWeight:700, color:'#1c1917', marginBottom:6 }}>Enter your Anthropic API Key</h2>
-        <p style={{ fontSize:13, color:'#78716c', lineHeight:1.65, marginBottom:20 }}>
-          Your key is saved only on this device — never stored in any server or code.
-          Get your key at <a href="https://console.anthropic.com" target="_blank" style={{ color:'#c96442', textDecoration:'underline' }}>console.anthropic.com</a> → API Keys → Create Key.
+        <h2 style={{fontSize:16,fontWeight:700,color:'#1c1917',marginBottom:6}}>Enter your Anthropic API Key</h2>
+        <p style={{fontSize:13,color:'#78716c',lineHeight:1.65,marginBottom:20}}>
+          Your key is saved only on this device. Get it at <a href="https://console.anthropic.com" target="_blank" style={{color:'#c96442',textDecoration:'underline'}}>console.anthropic.com</a> → API Keys → Create Key.
         </p>
-
-        {/* Key input */}
-        <div style={{ position:'relative', marginBottom:12 }}>
-          <input
-            type={show ? 'text' : 'password'}
-            value={key}
-            onChange={e => { setKey(e.target.value); setError(''); }}
-            onKeyDown={e => e.key === 'Enter' && save()}
+        <div style={{position:'relative',marginBottom:12}}>
+          <input type={show?'text':'password'} value={key} onChange={e=>{setKey(e.target.value);setError('');}}
+            onKeyDown={e=>e.key==='Enter'&&save()}
             placeholder="sk-ant-api03-..."
-            style={{ width:'100%', padding:'12px 48px 12px 14px', border:`1.5px solid ${error ? '#ef4444' : '#e7e5e0'}`, borderRadius:10, fontSize:14, fontFamily:'monospace', color:'#1c1917', background:'#fafaf9', outline:'none', transition:'border-color .2s' }}
-            onFocus={e => e.target.style.borderColor='#c96442'}
-            onBlur={e => e.target.style.borderColor = error ? '#ef4444' : '#e7e5e0'}
-          />
-          <button onClick={() => setShow(s => !s)} style={{ position:'absolute', right:12, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', fontSize:16, color:'#a8a29e' }}>
-            {show ? '🙈' : '👁️'}
-          </button>
+            style={{width:'100%',padding:'12px 48px 12px 14px',border:`1.5px solid ${error?'#ef4444':'#e7e5e0'}`,borderRadius:10,fontSize:14,fontFamily:'monospace',color:'#1c1917',background:'#fafaf9',outline:'none'}}
+            onFocus={e=>e.target.style.borderColor='#c96442'} onBlur={e=>e.target.style.borderColor=error?'#ef4444':'#e7e5e0'} />
+          <button onClick={()=>setShow(s=>!s)} style={{position:'absolute',right:12,top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',fontSize:16,color:'#a8a29e'}}>{show?'🙈':'👁️'}</button>
         </div>
-
-        {error && <p style={{ fontSize:12, color:'#ef4444', marginBottom:12, lineHeight:1.5 }}>⚠️ {error}</p>}
-
-        <button onClick={save} disabled={!key.trim() || testing}
-          style={{ width:'100%', padding:'13px', background: key.trim() && !testing ? '#1c1917' : '#e7e5e0', color: key.trim() && !testing ? '#fff' : '#a8a29e', border:'none', borderRadius:10, fontSize:15, fontWeight:600, cursor: key.trim() && !testing ? 'pointer' : 'not-allowed', transition:'all .2s', fontFamily:'inherit' }}>
-          {testing ? '⏳ Testing connection…' : '✓ Save & Start Chatting'}
+        {error && <div style={{fontSize:12,color:'#dc2626',marginBottom:12,lineHeight:1.6,background:'#fef2f2',border:'1px solid #fecaca',borderRadius:8,padding:'8px 12px'}}>⚠️ {error}</div>}
+        {status && !error && <div style={{fontSize:12,color:'#92400e',marginBottom:12,lineHeight:1.6,background:'#fffbeb',border:'1px solid #fde68a',borderRadius:8,padding:'8px 12px'}}>⏳ {status}</div>}
+        <button onClick={save} disabled={!key.trim()||testing}
+          style={{width:'100%',padding:'13px',background:key.trim()&&!testing?'#1c1917':'#e7e5e0',color:key.trim()&&!testing?'#fff':'#a8a29e',border:'none',borderRadius:10,fontSize:15,fontWeight:600,cursor:key.trim()&&!testing?'pointer':'not-allowed',transition:'all .2s',fontFamily:'inherit',display:'flex',alignItems:'center',justifyContent:'center',gap:8}}>
+          {testing ? <><span style={{width:16,height:16,border:'2px solid #a8a29e',borderTopColor:'#fff',borderRadius:'50%',display:'inline-block',animation:'spin .7s linear infinite'}} />Testing...</> : '✓ Save & Start Chatting'}
         </button>
-
-        {/* Security note */}
-        <div style={{ marginTop:20, background:'#f0fdf4', border:'1px solid #bbf7d0', borderRadius:10, padding:'12px 14px', display:'flex', gap:10, alignItems:'flex-start' }}>
-          <span style={{ fontSize:16, flexShrink:0 }}>🔒</span>
-          <p style={{ fontSize:12, color:'#166534', lineHeight:1.6, margin:0 }}>
-            <strong>Your key stays on your device.</strong> It is saved in your browser's local storage — the same place websites save preferences. It never touches GitHub or any server.
-          </p>
+        <div style={{marginTop:16,background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:10,padding:'12px 14px',display:'flex',gap:10}}>
+          <span style={{fontSize:16,flexShrink:0}}>🔒</span>
+          <p style={{fontSize:12,color:'#166534',lineHeight:1.6,margin:0}}><strong>Your key stays on your device.</strong> Saved in browser local storage only — never on GitHub or any server.</p>
         </div>
-
-        {/* Cost note */}
-        <div style={{ marginTop:10, background:'#fffbeb', border:'1px solid #fde68a', borderRadius:10, padding:'12px 14px', display:'flex', gap:10, alignItems:'flex-start' }}>
-          <span style={{ fontSize:16, flexShrink:0 }}>💡</span>
-          <p style={{ fontSize:12, color:'#92400e', lineHeight:1.6, margin:0 }}>
-            <strong>Add $5 credit</strong> in Anthropic Console → Billing. That covers weeks of personal use. Each conversation costs roughly $0.01–0.05.
-          </p>
+        <div style={{marginTop:10,background:'#fffbeb',border:'1px solid #fde68a',borderRadius:10,padding:'12px 14px',display:'flex',gap:10}}>
+          <span style={{fontSize:16,flexShrink:0}}>💳</span>
+          <p style={{fontSize:12,color:'#92400e',lineHeight:1.6,margin:0}}><strong>Need to add credits?</strong> Go to <a href="https://console.anthropic.com" target="_blank" style={{color:'#c96442',textDecoration:'underline'}}>console.anthropic.com</a> → Billing → Add $5. Each chat costs ~$0.01.</p>
         </div>
       </div>
     </div>
   );
 }
 
-// ── Settings panel (change key) ───────────────────────────────────────────────
-function SettingsPanel({ onClose, onReset }) {
-  const masked = (localStorage.getItem('ai_api_key') || '').slice(0,12) + '••••••••••••••';
+// ── Settings Panel ────────────────────────────────────────────────────────────
+function SettingsPanel({ model, onClose, onReset }) {
+  const masked = (localStorage.getItem('ai_api_key')||'').slice(0,16)+'••••••••••••';
   return (
-    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.4)', zIndex:100, display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}
-      onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{ background:'#fff', borderRadius:16, border:'1px solid #e7e5e0', padding:'28px 24px', maxWidth:380, width:'100%', boxShadow:'0 8px 40px rgba(0,0,0,.12)' }}>
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20 }}>
-          <h3 style={{ fontSize:16, fontWeight:700, color:'#1c1917' }}>⚙️ Settings</h3>
-          <button onClick={onClose} style={{ background:'none', border:'none', fontSize:20, cursor:'pointer', color:'#a8a29e' }}>×</button>
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.4)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:20}} onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div style={{background:'#fff',borderRadius:16,border:'1px solid #e7e5e0',padding:'28px 24px',maxWidth:380,width:'100%',boxShadow:'0 8px 40px rgba(0,0,0,.12)'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+          <h3 style={{fontSize:16,fontWeight:700,color:'#1c1917'}}>⚙️ Settings</h3>
+          <button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:'#a8a29e'}}>×</button>
         </div>
-        <div style={{ background:'#f0fdf4', border:'1px solid #bbf7d0', borderRadius:10, padding:'12px 14px', marginBottom:16 }}>
-          <p style={{ fontSize:12, color:'#166534', margin:'0 0 4px', fontWeight:600 }}>🔒 Current API Key</p>
-          <p style={{ fontSize:12, color:'#166534', fontFamily:'monospace', margin:0 }}>{masked}</p>
+        <div style={{background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:10,padding:'12px 14px',marginBottom:10}}>
+          <p style={{fontSize:12,color:'#166534',margin:'0 0 4px',fontWeight:600}}>🔒 API Key</p>
+          <p style={{fontSize:12,color:'#166534',fontFamily:'monospace',margin:0}}>{masked}</p>
         </div>
-        <p style={{ fontSize:13, color:'#78716c', marginBottom:16, lineHeight:1.6 }}>Your key is only on this device. To change it or if you get auth errors, click below to re-enter a new key.</p>
-        <button onClick={onReset} style={{ width:'100%', padding:'11px', background:'#fef2f2', border:'1px solid #fecaca', borderRadius:10, color:'#dc2626', fontSize:14, fontWeight:600, cursor:'pointer', fontFamily:'inherit' }}>
+        <div style={{background:'#eff6ff',border:'1px solid #bfdbfe',borderRadius:10,padding:'12px 14px',marginBottom:16}}>
+          <p style={{fontSize:12,color:'#1d4ed8',margin:'0 0 4px',fontWeight:600}}>🤖 Active Model</p>
+          <p style={{fontSize:12,color:'#1d4ed8',fontFamily:'monospace',margin:0}}>{model}</p>
+        </div>
+        <button onClick={onReset} style={{width:'100%',padding:'11px',background:'#fef2f2',border:'1px solid #fecaca',borderRadius:10,color:'#dc2626',fontSize:14,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
           🔄 Change API Key
         </button>
       </div>
@@ -175,8 +185,9 @@ function SettingsPanel({ onClose, onReset }) {
 
 // ── Main App ──────────────────────────────────────────────────────────────────
 function App() {
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('ai_api_key') || '');
-  const [chats, setChats] = useState([{ id: '1', title: 'New conversation', messages: [], createdAt: Date.now() }]);
+  const [apiKey, setApiKey] = useState(()=>localStorage.getItem('ai_api_key')||'');
+  const [model, setModel] = useState(()=>localStorage.getItem('ai_model')||'claude-3-haiku-20240307');
+  const [chats, setChats] = useState([{id:'1',title:'New conversation',messages:[],createdAt:Date.now()}]);
   const [currentId, setCurrentId] = useState('1');
   const [input, setInput] = useState('');
   const [streaming, setStreaming] = useState('');
@@ -186,169 +197,143 @@ function App() {
   const bottomRef = useRef(null);
   const taRef = useRef(null);
 
-  const current = chats.find(c => c.id === currentId);
-  const messages = current?.messages ?? [];
+  const current = chats.find(c=>c.id===currentId);
+  const messages = current?.messages??[];
 
-  useEffect(() => {
-    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 30);
-  }, [messages.length, streaming]);
+  useEffect(()=>{ setTimeout(()=>bottomRef.current?.scrollIntoView({behavior:'smooth'}),30); },[messages.length,streaming]);
 
-  if (!apiKey) return <KeySetup onSave={k => setApiKey(k)} />;
+  if (!apiKey) return <KeySetup onSave={(k,m)=>{setApiKey(k);setModel(m||'claude-3-haiku-20240307');}} />;
 
   const newChat = () => {
     const id = Date.now().toString();
-    setChats(p => [{ id, title: 'New conversation', messages: [], createdAt: Date.now() }, ...p]);
-    setCurrentId(id);
-    setStreaming('');
+    setChats(p=>[{id,title:'New conversation',messages:[],createdAt:Date.now()},...p]);
+    setCurrentId(id); setStreaming('');
   };
 
-  const deleteChat = (id) => {
-    setChats(p => p.filter(c => c.id !== id));
-    if (currentId === id) setCurrentId(chats.find(c => c.id !== id)?.id || '');
+  const deleteChat = id => {
+    setChats(p=>p.filter(c=>c.id!==id));
+    if (currentId===id) setCurrentId(chats.find(c=>c.id!==id)?.id||'');
   };
 
   const send = async (text) => {
-    const t = (text || input).trim();
-    if (!t || loading) return;
+    const t=(text||input).trim();
+    if(!t||loading) return;
     setInput('');
-    if (taRef.current) taRef.current.style.height = 'auto';
-
-    const userMsg = { role: 'user', content: t };
-    const cid = currentId;
-    setChats(p => p.map(c => c.id === cid ? {
-      ...c,
-      title: c.title === 'New conversation' ? t.slice(0, 40) + (t.length > 40 ? '…' : '') : c.title,
-      messages: [...c.messages, userMsg]
-    } : c));
-    setLoading(true);
-    setStreaming('');
-
+    if(taRef.current) taRef.current.style.height='auto';
+    const cid=currentId;
+    const userMsg={role:'user',content:t};
+    setChats(p=>p.map(c=>c.id===cid?{...c,title:c.title==='New conversation'?t.slice(0,40)+(t.length>40?'…':''):c.title,messages:[...c.messages,userMsg]}:c));
+    setLoading(true); setStreaming('');
     try {
-      const history = [...(chats.find(c => c.id === cid)?.messages ?? []).map(m => ({ role: m.role, content: m.content })), { role: 'user', content: t }];
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-        body: JSON.stringify({ model: 'claude-3-5-sonnet-20241022', max_tokens: 3000, system: SYSTEM, messages: history })
+      const history=[...(chats.find(c=>c.id===cid)?.messages??[]).map(m=>({role:m.role,content:m.content})),{role:'user',content:t}];
+      const res = await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST', headers:HEADERS_FOR(apiKey),
+        body:JSON.stringify({model,max_tokens:3000,system:SYSTEM,messages:history})
       });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error.message);
-      const reply = data.content?.[0]?.text || 'No response';
-
-      // Simulate streaming
-      let i = 0;
-      const tick = setInterval(() => {
-        i += 8;
-        setStreaming(reply.slice(0, i));
-        if (i >= reply.length) {
-          clearInterval(tick);
-          setStreaming('');
-          setChats(p => p.map(c => c.id === cid ? { ...c, messages: [...c.messages, { role: 'assistant', content: reply }] } : c));
-          setLoading(false);
-        }
-      }, 10);
-    } catch (e) {
+      const data=await res.json();
+      if(data.error) throw new Error(data.error.message);
+      const reply=data.content?.[0]?.text||'No response';
+      let i=0;
+      const tick=setInterval(()=>{
+        i+=8; setStreaming(reply.slice(0,i));
+        if(i>=reply.length){ clearInterval(tick); setStreaming('');
+          setChats(p=>p.map(c=>c.id===cid?{...c,messages:[...c.messages,{role:'assistant',content:reply}]}:c));
+          setLoading(false); }
+      },10);
+    } catch(e) {
       setStreaming('');
-      const errMsg = e.message.includes('401') || e.message.includes('auth')
-        ? '⚠️ **API key error.** Go to Settings (⚙️) to update your key.'
-        : `⚠️ **Error:** ${e.message}`;
-      setChats(p => p.map(c => c.id === cid ? { ...c, messages: [...c.messages, { role: 'assistant', content: errMsg }] } : c));
+      setChats(p=>p.map(c=>c.id===cid?{...c,messages:[...c.messages,{role:'assistant',content:`⚠️ **Error:** ${e.message}\n\nTry refreshing or go to ⚙️ Settings to re-enter your API key.`}]}:c));
       setLoading(false);
     }
   };
 
-  const chips = ['Build a weather app', 'Create a habit tracker app', 'Write a snake game', 'Make a budget calculator', 'Build a landing page for my idea', 'Create a quiz app'];
+  const chips=['Build a weather app','Create a habit tracker','Write a snake game','Make a budget calculator','Build a landing page','Create a quiz app'];
 
   return (
-    <div style={{ display:'flex', height:'100vh', overflow:'hidden', background:'#fff' }}>
-      {showSettings && <SettingsPanel onClose={() => setShowSettings(false)} onReset={() => { localStorage.removeItem('ai_api_key'); setApiKey(''); setShowSettings(false); }} />}
+    <div style={{display:'flex',height:'100vh',overflow:'hidden',background:'#fff'}}>
+      {showSettings&&<SettingsPanel model={model} onClose={()=>setShowSettings(false)} onReset={()=>{localStorage.removeItem('ai_api_key');localStorage.removeItem('ai_model');setApiKey('');setShowSettings(false);}} />}
 
-      {/* ── Sidebar ── */}
-      <div style={{ width: sidebar ? 240 : 0, minWidth: sidebar ? 240 : 0, background:'#f9f7f4', borderRight:'1px solid #e7e5e0', display:'flex', flexDirection:'column', overflow:'hidden', transition:'all .25s', flexShrink:0 }}>
-        <div style={{ padding:'14px 12px', borderBottom:'1px solid #e7e5e0' }}>
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:10 }}>
-            <div style={{ display:'flex', alignItems:'center', gap:7 }}>
-              <div style={{ width:26, height:26, borderRadius:7, background:'linear-gradient(135deg,#c96442,#7c3f2b)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                <span style={{ color:'#fff', fontSize:13 }}>✦</span>
+      {/* Sidebar */}
+      <div style={{width:sidebar?240:0,minWidth:sidebar?240:0,background:'#f9f7f4',borderRight:'1px solid #e7e5e0',display:'flex',flexDirection:'column',overflow:'hidden',transition:'all .25s',flexShrink:0}}>
+        <div style={{padding:'14px 12px',borderBottom:'1px solid #e7e5e0'}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
+            <div style={{display:'flex',alignItems:'center',gap:7}}>
+              <div style={{width:26,height:26,borderRadius:7,background:'linear-gradient(135deg,#c96442,#7c3f2b)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                <span style={{color:'#fff',fontSize:13}}>✦</span>
               </div>
-              <span style={{ fontSize:14, fontWeight:700, color:'#1c1917', letterSpacing:'-0.02em' }}>My AI</span>
+              <span style={{fontSize:14,fontWeight:700,color:'#1c1917',letterSpacing:'-0.02em'}}>My AI</span>
             </div>
-            <button onClick={() => setSidebar(false)} style={{ background:'none', border:'none', cursor:'pointer', color:'#a8a29e', fontSize:16 }}>←</button>
+            <button onClick={()=>setSidebar(false)} style={{background:'none',border:'none',cursor:'pointer',color:'#a8a29e',fontSize:16}}>←</button>
           </div>
-          <button onClick={newChat} style={{ display:'flex', alignItems:'center', gap:7, width:'100%', background:'#fff', border:'1px solid #e7e5e0', borderRadius:8, padding:'8px 11px', cursor:'pointer', fontSize:13, color:'#44403c', fontFamily:'inherit', fontWeight:500, boxShadow:'0 1px 2px rgba(0,0,0,.04)' }}>
+          <button onClick={newChat} style={{display:'flex',alignItems:'center',gap:7,width:'100%',background:'#fff',border:'1px solid #e7e5e0',borderRadius:8,padding:'8px 11px',cursor:'pointer',fontSize:13,color:'#44403c',fontFamily:'inherit',fontWeight:500,boxShadow:'0 1px 2px rgba(0,0,0,.04)'}}>
             ✏️ New chat
           </button>
         </div>
-
-        <div style={{ flex:1, overflowY:'auto', padding:'8px' }}>
-          {chats.length === 0
-            ? <p style={{ fontSize:12, color:'#a8a29e', textAlign:'center', marginTop:24 }}>No conversations yet</p>
-            : chats.map(c => (
-              <div key={c.id} style={{ display:'flex', alignItems:'center', gap:4, marginBottom:1 }}>
-                <div onClick={() => setCurrentId(c.id)} style={{ flex:1, padding:'8px 10px', borderRadius:8, cursor:'pointer', background: currentId===c.id ? '#f0ede8' : 'transparent', border: currentId===c.id ? '1px solid #e0d8cf' : '1px solid transparent', fontSize:13, color: currentId===c.id ? '#1c1917' : '#57534e', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', fontWeight: currentId===c.id ? 500 : 400, transition:'all .12s' }}>
-                  💬 {c.title}
-                </div>
-                <button onClick={() => deleteChat(c.id)} style={{ background:'none', border:'none', color:'#d4c9c0', cursor:'pointer', fontSize:16, padding:'4px', borderRadius:4, flexShrink:0, transition:'color .15s' }}
-                  onMouseEnter={e => e.target.style.color='#ef4444'} onMouseLeave={e => e.target.style.color='#d4c9c0'}>×</button>
+        <div style={{flex:1,overflowY:'auto',padding:'8px'}}>
+          {chats.map(c=>(
+            <div key={c.id} style={{display:'flex',alignItems:'center',gap:4,marginBottom:1}}>
+              <div onClick={()=>setCurrentId(c.id)} style={{flex:1,padding:'8px 10px',borderRadius:8,cursor:'pointer',background:currentId===c.id?'#f0ede8':'transparent',border:currentId===c.id?'1px solid #e0d8cf':'1px solid transparent',fontSize:13,color:currentId===c.id?'#1c1917':'#57534e',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',fontWeight:currentId===c.id?500:400,transition:'all .12s'}}>
+                💬 {c.title}
               </div>
-            ))}
+              <button onClick={()=>deleteChat(c.id)} style={{background:'none',border:'none',color:'#d4c9c0',cursor:'pointer',fontSize:16,padding:'4px',borderRadius:4,flexShrink:0}}
+                onMouseEnter={e=>e.target.style.color='#ef4444'} onMouseLeave={e=>e.target.style.color='#d4c9c0'}>×</button>
+            </div>
+          ))}
         </div>
-
-        <div style={{ padding:'12px', borderTop:'1px solid #e7e5e0' }}>
-          <button onClick={() => setShowSettings(true)} style={{ display:'flex', alignItems:'center', gap:8, width:'100%', background:'none', border:'1px solid #e7e5e0', borderRadius:8, padding:'8px 11px', cursor:'pointer', fontSize:12, color:'#78716c', fontFamily:'inherit', transition:'all .15s' }}
-            onMouseEnter={e => e.currentTarget.style.background='#f5f4f2'} onMouseLeave={e => e.currentTarget.style.background='none'}>
+        <div style={{padding:'12px',borderTop:'1px solid #e7e5e0'}}>
+          <button onClick={()=>setShowSettings(true)} style={{display:'flex',alignItems:'center',gap:8,width:'100%',background:'none',border:'1px solid #e7e5e0',borderRadius:8,padding:'8px 11px',cursor:'pointer',fontSize:12,color:'#78716c',fontFamily:'inherit'}}
+            onMouseEnter={e=>e.currentTarget.style.background='#f5f4f2'} onMouseLeave={e=>e.currentTarget.style.background='none'}>
             ⚙️ Settings &amp; API Key
           </button>
         </div>
       </div>
 
-      {/* ── Main ── */}
-      <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
-        {/* Header */}
-        <div style={{ display:'flex', alignItems:'center', gap:10, padding:'11px 18px', borderBottom:'1px solid #f0ede8', flexShrink:0 }}>
-          {!sidebar && <button onClick={() => setSidebar(true)} style={{ background:'none', border:'1px solid #e7e5e0', borderRadius:7, padding:'5px 10px', cursor:'pointer', fontSize:13, color:'#78716c' }}>☰</button>}
-          <span style={{ fontSize:14, fontWeight:600, color:'#1c1917', flex:1 }}>{current?.title || 'My AI Assistant'}</span>
-          <span style={{ fontSize:11, background:'#f0ede8', color:'#9a3412', padding:'3px 9px', borderRadius:10, fontWeight:500 }}>Claude 3.5 Sonnet</span>
-          <button onClick={() => setShowSettings(true)} title="Settings" style={{ background:'none', border:'1px solid #e7e5e0', borderRadius:7, padding:'5px 9px', cursor:'pointer', fontSize:14, color:'#78716c' }}>⚙️</button>
+      {/* Main */}
+      <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,padding:'11px 18px',borderBottom:'1px solid #f0ede8',flexShrink:0}}>
+          {!sidebar&&<button onClick={()=>setSidebar(true)} style={{background:'none',border:'1px solid #e7e5e0',borderRadius:7,padding:'5px 10px',cursor:'pointer',fontSize:13,color:'#78716c'}}>☰</button>}
+          <span style={{fontSize:14,fontWeight:600,color:'#1c1917',flex:1}}>{current?.title||'My AI Assistant'}</span>
+          <span style={{fontSize:10,background:'#f0ede8',color:'#9a3412',padding:'3px 9px',borderRadius:10,fontWeight:500,fontFamily:'monospace'}}>{model.split('-').slice(0,3).join('-')}</span>
+          <button onClick={()=>setShowSettings(true)} style={{background:'none',border:'1px solid #e7e5e0',borderRadius:7,padding:'5px 9px',cursor:'pointer',fontSize:14,color:'#78716c'}}>⚙️</button>
         </div>
 
-        {/* Messages */}
-        <div style={{ flex:1, overflowY:'auto', padding:'24px 0' }}>
-          {messages.length === 0 && !streaming ? (
-            <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:24, padding:'40px 20px', minHeight:'60%' }}>
-              <div style={{ width:56, height:56, borderRadius:16, background:'linear-gradient(135deg,#c96442,#7c3f2b)', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 4px 20px rgba(201,100,66,.25)' }}>
-                <span style={{ color:'#fff', fontSize:26 }}>✦</span>
+        <div style={{flex:1,overflowY:'auto',padding:'24px 0'}}>
+          {messages.length===0&&!streaming?(
+            <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:24,padding:'40px 20px',minHeight:'60%'}}>
+              <div style={{width:56,height:56,borderRadius:16,background:'linear-gradient(135deg,#c96442,#7c3f2b)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 4px 20px rgba(201,100,66,.25)'}}>
+                <span style={{color:'#fff',fontSize:26}}>✦</span>
               </div>
-              <div style={{ textAlign:'center' }}>
-                <div style={{ fontSize:24, fontWeight:800, color:'#1c1917', letterSpacing:'-0.03em', marginBottom:8 }}>Your Personal AI</div>
-                <div style={{ fontSize:14, color:'#78716c', maxWidth:320, lineHeight:1.7 }}>Senior developer + product strategist in your pocket. Build apps, solve problems, ship ideas.</div>
+              <div style={{textAlign:'center'}}>
+                <div style={{fontSize:24,fontWeight:800,color:'#1c1917',letterSpacing:'-0.03em',marginBottom:8}}>Your Personal AI</div>
+                <div style={{fontSize:14,color:'#78716c',maxWidth:320,lineHeight:1.7}}>Senior developer + product strategist. Build apps, solve problems, ship ideas.</div>
               </div>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, maxWidth:480, width:'100%' }}>
-                {chips.map((c, i) => (
-                  <button key={i} onClick={() => send(c)} style={{ background:'#fafaf9', border:'1px solid #e7e5e0', borderRadius:10, padding:'12px 14px', cursor:'pointer', fontSize:12, color:'#44403c', fontFamily:'inherit', textAlign:'left', lineHeight:1.5, transition:'all .15s' }}
-                    onMouseEnter={e => e.currentTarget.style.background='#f0ede8'} onMouseLeave={e => e.currentTarget.style.background='#fafaf9'}>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,maxWidth:480,width:'100%'}}>
+                {chips.map((c,i)=>(
+                  <button key={i} onClick={()=>send(c)} style={{background:'#fafaf9',border:'1px solid #e7e5e0',borderRadius:10,padding:'12px 14px',cursor:'pointer',fontSize:12,color:'#44403c',fontFamily:'inherit',textAlign:'left',lineHeight:1.5,transition:'all .15s'}}
+                    onMouseEnter={e=>e.currentTarget.style.background='#f0ede8'} onMouseLeave={e=>e.currentTarget.style.background='#fafaf9'}>
                     {c}
                   </button>
                 ))}
               </div>
             </div>
-          ) : (
-            <div style={{ maxWidth:720, margin:'0 auto', padding:'0 18px' }}>
-              {[...messages, ...(streaming ? [{ role:'assistant', content:streaming, isStreaming:true }] : [])].map((m, i) => (
-                <div key={i} style={{ display:'flex', flexDirection: m.role==='user' ? 'row-reverse' : 'row', gap:12, marginBottom:24, alignItems:'flex-start' }}>
-                  {m.role === 'assistant' && (
-                    <div style={{ width:30, height:30, borderRadius:8, background:'linear-gradient(135deg,#c96442,#7c3f2b)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, marginTop:2 }}>
-                      <span style={{ color:'#fff', fontSize:14 }}>✦</span>
+          ):(
+            <div style={{maxWidth:720,margin:'0 auto',padding:'0 18px'}}>
+              {[...messages,...(streaming?[{role:'assistant',content:streaming,isStreaming:true}]:[])].map((m,i)=>(
+                <div key={i} style={{display:'flex',flexDirection:m.role==='user'?'row-reverse':'row',gap:12,marginBottom:24,alignItems:'flex-start'}}>
+                  {m.role==='assistant'&&(
+                    <div style={{width:30,height:30,borderRadius:8,background:'linear-gradient(135deg,#c96442,#7c3f2b)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:2}}>
+                      <span style={{color:'#fff',fontSize:14}}>✦</span>
                     </div>
                   )}
-                  <div style={{ maxWidth: m.role==='user' ? '78%' : '100%', flex: m.role==='assistant' ? 1 : undefined }}>
-                    {m.role === 'user' ? (
-                      <div style={{ background:'#1c1917', color:'#fafaf9', padding:'11px 16px', borderRadius:'16px 16px 4px 16px', fontSize:15, lineHeight:1.65, whiteSpace:'pre-wrap', wordBreak:'break-word' }}>{m.content}</div>
-                    ) : (
+                  <div style={{maxWidth:m.role==='user'?'78%':'100%',flex:m.role==='assistant'?1:undefined}}>
+                    {m.role==='user'?(
+                      <div style={{background:'#1c1917',color:'#fafaf9',padding:'11px 16px',borderRadius:'16px 16px 4px 16px',fontSize:15,lineHeight:1.65,whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{m.content}</div>
+                    ):(
                       <div>
-                        <div style={{ fontSize:12, fontWeight:600, color:'#78716c', marginBottom:6, display:'flex', alignItems:'center', gap:6 }}>
-                          Assistant {m.isStreaming && <span style={{ width:6, height:6, borderRadius:'50%', background:'#c96442', display:'inline-block', animation:'blink 1s ease-in-out infinite' }} />}
+                        <div style={{fontSize:12,fontWeight:600,color:'#78716c',marginBottom:6,display:'flex',alignItems:'center',gap:6}}>
+                          Assistant {m.isStreaming&&<span style={{width:6,height:6,borderRadius:'50%',background:'#c96442',display:'inline-block',animation:'blink 1s ease-in-out infinite'}}/>}
                         </div>
-                        <div style={{ fontSize:15, color:'#1c1917', lineHeight:1.75 }} dangerouslySetInnerHTML={{ __html: md(m.content) }} />
+                        <div style={{fontSize:15,color:'#1c1917',lineHeight:1.75}} dangerouslySetInnerHTML={{__html:md(m.content)}} />
                       </div>
                     )}
                   </div>
@@ -357,33 +342,24 @@ function App() {
               <div ref={bottomRef} />
             </div>
           )}
-          {messages.length === 0 && !streaming && <div ref={bottomRef} />}
+          {messages.length===0&&!streaming&&<div ref={bottomRef} />}
         </div>
 
-        {/* Input bar */}
-        <div style={{ padding:'12px 18px 18px', flexShrink:0, maxWidth:720, width:'100%', margin:'0 auto' }}>
-          <div style={{ display:'flex', gap:8, background:'#fff', border:'1.5px solid #e7e5e0', borderRadius:14, padding:'10px 12px', boxShadow:'0 1px 4px rgba(0,0,0,.06)', alignItems:'flex-end' }}>
-            <textarea ref={taRef} value={input} onChange={e => setInput(e.target.value)}
-              onKeyDown={e => { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
-              placeholder="Ask me to build an app, solve a problem, write code…"
-              rows={1}
-              style={{ flex:1, background:'none', border:'none', outline:'none', resize:'none', fontSize:15, lineHeight:1.6, color:'#1c1917', fontFamily:'inherit', maxHeight:160, overflowY:'auto' }}
-              onInput={e => { e.target.style.height='auto'; e.target.style.height=Math.min(e.target.scrollHeight,160)+'px'; }}
-            />
-            <button onClick={() => send()} disabled={!input.trim() || loading}
-              style={{ width:36, height:36, borderRadius:9, border:'none', background: input.trim()&&!loading ? '#1c1917' : '#e7e5e0', color: input.trim()&&!loading ? '#fff' : '#a8a29e', cursor: input.trim()&&!loading ? 'pointer' : 'not-allowed', fontSize:16, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, transition:'all .2s' }}>
-              {loading ? <span style={{ width:16, height:16, border:'2px solid #a8a29e', borderTopColor:'transparent', borderRadius:'50%', display:'inline-block', animation:'spin .7s linear infinite' }} /> : '↑'}
+        <div style={{padding:'12px 18px 18px',flexShrink:0,maxWidth:720,width:'100%',margin:'0 auto'}}>
+          <div style={{display:'flex',gap:8,background:'#fff',border:'1.5px solid #e7e5e0',borderRadius:14,padding:'10px 12px',boxShadow:'0 1px 4px rgba(0,0,0,.06)',alignItems:'flex-end'}}>
+            <textarea ref={taRef} value={input} onChange={e=>setInput(e.target.value)}
+              onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}}
+              placeholder="Ask me to build an app, solve a problem, write code…" rows={1}
+              style={{flex:1,background:'none',border:'none',outline:'none',resize:'none',fontSize:15,lineHeight:1.6,color:'#1c1917',fontFamily:'inherit',maxHeight:160,overflowY:'auto'}}
+              onInput={e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,160)+'px';}} />
+            <button onClick={()=>send()} disabled={!input.trim()||loading}
+              style={{width:36,height:36,borderRadius:9,border:'none',background:input.trim()&&!loading?'#1c1917':'#e7e5e0',color:input.trim()&&!loading?'#fff':'#a8a29e',cursor:input.trim()&&!loading?'pointer':'not-allowed',fontSize:16,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,transition:'all .2s'}}>
+              {loading?<span style={{width:16,height:16,border:'2px solid #fff',borderTopColor:'transparent',borderRadius:'50%',display:'inline-block',animation:'spin .7s linear infinite'}}/>:'↑'}
             </button>
           </div>
-          <p style={{ textAlign:'center', fontSize:11, color:'#c4b9b0', marginTop:7 }}>Your personal senior dev AI · Powered by Claude 3.5 Sonnet</p>
+          <p style={{textAlign:'center',fontSize:11,color:'#c4b9b0',marginTop:7}}>Your personal senior dev AI · Powered by Claude</p>
         </div>
       </div>
-
-      <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes blink { 0%,100%{opacity:.3} 50%{opacity:1} }
-        textarea::placeholder { color:#c4b9b0; }
-      `}</style>
     </div>
   );
 }
