@@ -1,370 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My AI Assistant</title>
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f9f7f4; height: 100vh; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-thumb { background: #d4cfc9; border-radius: 4px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes blink { 0%,100%{opacity:.3} 50%{opacity:1} }
-    textarea::placeholder { color: #c4b9b0; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My AI Assistant</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f9f7f4;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#d4cfc9;border-radius:4px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#setup{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#fdf6f0,#f5ede4);padding:20px}
+.card{background:#fff;border-radius:20px;border:1px solid #e7e5e0;padding:32px 26px;max-width:420px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.08)}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+.logo-icon{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#c96442,#7c3f2b);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;flex-shrink:0}
+h2{font-size:15px;font-weight:700;color:#1c1917;margin-bottom:5px}
+.hint{font-size:13px;color:#78716c;line-height:1.65;margin-bottom:18px}
+.hint a{color:#c96442}
+.iw{position:relative;margin-bottom:10px}
+.iw input{width:100%;padding:12px 46px 12px 14px;border:1.5px solid #e7e5e0;border-radius:10px;font-size:13px;font-family:monospace;color:#1c1917;background:#fafaf9;outline:none}
+.iw input:focus{border-color:#c96442}
+.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px}
+.errmsg{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 13px;font-size:13px;color:#991b1b;margin-bottom:12px;line-height:1.6;white-space:pre-wrap;display:none}
+.statusmsg{background:#eff6ff;border:1px solid #93c5fd;border-radius:8px;padding:8px 13px;font-size:12px;color:#1e40af;margin-bottom:10px;display:none}
+.debug{background:#111;border-radius:8px;padding:12px;font-size:11px;font-family:monospace;color:#4ade80;margin-bottom:12px;line-height:1.6;white-space:pre-wrap;word-break:break-all;max-height:180px;overflow-y:auto;display:none}
+.pbtn{width:100%;padding:13px;background:#1c1917;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.pbtn:disabled{background:#e7e5e0;color:#a8a29e;cursor:not-allowed}
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.ibox{border-radius:10px;padding:11px 13px;font-size:12px;line-height:1.6}
+.ig{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+.iy{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+#chat{display:none;flex-direction:column;height:100vh}
+#hdr{display:flex;align-items:center;gap:10px;padding:11px 18px;border-bottom:1px solid #f0ede8;background:#fff;flex-shrink:0}
+#ctitle{font-size:14px;font-weight:600;color:#1c1917;flex:1}
+#mbadge{font-size:10px;background:#f0ede8;color:#9a3412;padding:3px 9px;border-radius:10px;font-weight:600;font-family:monospace}
+.hb{background:none;border:1px solid #e7e5e0;border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;color:#78716c}
+#msgs{flex:1;overflow-y:auto;padding:24px 0}
+#inner{max-width:720px;margin:0 auto;padding:0 18px}
+.welcome{display:flex;flex-direction:column;align-items:center;gap:22px;padding:40px 20px;min-height:60vh}
+.wi{width:58px;height:58px;border-radius:16px;background:linear-gradient(135deg,#c96442,#7c3f2b);display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;box-shadow:0 4px 20px rgba(201,100,66,.25);margin:0 auto}
+.wt{font-size:24px;font-weight:800;color:#1c1917;letter-spacing:-.03em;text-align:center}
+.ws{font-size:14px;color:#78716c;max-width:300px;line-height:1.7;text-align:center}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:460px;width:100%}
+.chip{background:#fafaf9;border:1px solid #e7e5e0;border-radius:10px;padding:12px 13px;cursor:pointer;font-size:12px;color:#44403c;font-family:inherit;text-align:left;line-height:1.5}
+.chip:hover{background:#f0ede8}
+.mrow{display:flex;gap:12px;margin-bottom:24px;animation:fadein .3s ease}
+.mrow.u{flex-direction:row-reverse}
+.av{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#c96442,#7c3f2b);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;flex-shrink:0;margin-top:2px}
+.bw{flex:1;min-width:0}
+.bw.uw{flex:none;max-width:78%}
+.lbl{font-size:12px;font-weight:600;color:#78716c;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.dot{width:6px;height:6px;border-radius:50%;background:#c96442;display:inline-block;animation:spin 1s ease-in-out infinite}
+.ububble{background:#1c1917;color:#fafaf9;padding:11px 16px;border-radius:16px 16px 4px 16px;font-size:15px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+.aic{font-size:15px;color:#1c1917;line-height:1.8}
+.aic h1{font-size:21px;font-weight:800;margin:20px 0 8px}
+.aic h2{font-size:17px;font-weight:700;margin:18px 0 6px;border-bottom:1px solid #e7e5e0;padding-bottom:4px}
+.aic h3{font-size:15px;font-weight:700;margin:14px 0 4px}
+.aic li{margin:3px 0 3px 18px;line-height:1.7}
+.aic code{background:#f0ede8;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.85em;color:#9a3412}
+.cb{margin:12px 0;border-radius:10px;overflow:hidden;border:1px solid #1e2030}
+.ch{background:#1a1b26;padding:7px 14px;display:flex;justify-content:space-between;align-items:center}
+.cl{color:#7aa2f7;font-family:monospace;font-size:11px}
+.cpb{background:none;border:1px solid #2a2f45;border-radius:4px;color:#565f89;cursor:pointer;font-size:11px;padding:2px 9px}
+.cp{background:#0f1117;padding:16px;overflow-x:auto;margin:0;line-height:1.7;color:#cdd6f4;font-family:monospace;font-size:13px}
+#ia{padding:12px 18px 18px;flex-shrink:0;max-width:720px;width:100%;margin:0 auto}
+.ib{display:flex;gap:8px;background:#fff;border:1.5px solid #e7e5e0;border-radius:14px;padding:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06);align-items:flex-end}
+.ib:focus-within{border-color:#c9b8a0}
+#mi{flex:1;background:none;border:none;outline:none;resize:none;font-size:15px;line-height:1.6;color:#1c1917;font-family:inherit;max-height:160px;overflow-y:auto}
+#mi::placeholder{color:#c4b9b0}
+#sb{width:36px;height:36px;border-radius:9px;border:none;background:#e7e5e0;color:#a8a29e;cursor:not-allowed;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+#sb.on{background:#1c1917;color:#fff;cursor:pointer}
+.fn{text-align:center;font-size:11px;color:#c4b9b0;margin-top:7px}
+.sp{width:16px;height:16px;border:2px solid #a8a29e;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+</style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
 
-const SYSTEM = `You are a brilliant senior full-stack developer and product strategist acting as a personal AI assistant. Your user is an entrepreneur with great ideas but minimal coding experience. Your job is to:
-- Turn their ideas into real, working apps and code
-- Explain technical concepts in plain English, never condescending
-- Always produce complete, copy-paste-ready code that works immediately
-- Think like a CTO: consider architecture, scalability, and simplicity
-- When asked to build something, produce a single complete self-contained HTML file with all CSS and JS inline
-- Be concise but thorough. No filler. High signal.`;
-
-// Models tried in order — app uses whichever works on your account
-const MODELS = [
-  'claude-3-haiku-20240307',
-  'claude-3-5-haiku-20241022',
-  'claude-3-5-sonnet-20241022',
-  'claude-3-sonnet-20240229',
-];
-const HEADERS_FOR = key => ({
-  'Content-Type': 'application/json',
-  'x-api-key': key,
-  'anthropic-version': '2023-06-01',
-  'anthropic-dangerous-direct-browser-access': 'true',
-});
-
-const { useState, useRef, useEffect } = React;
-
-function md(text) {
-  if (!text) return '';
-  return text
-    .replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) =>
-      `<div style="margin:12px 0;border-radius:10px;overflow:hidden;border:1px solid #1e2030">
-        <div style="background:#1a1b26;padding:7px 14px;display:flex;justify-content:space-between;align-items:center">
-          <span style="color:#7aa2f7;font-family:monospace;font-size:11px">${lang||'code'}</span>
-          <button onclick="navigator.clipboard.writeText(this.closest('div').nextSibling.querySelector('code').textContent)" style="background:none;border:1px solid #2a2f45;border-radius:4px;color:#565f89;cursor:pointer;font-size:11px;padding:2px 9px">Copy</button>
-        </div>
-        <pre style="background:#0f1117;padding:16px;overflow-x:auto;margin:0;line-height:1.7;color:#cdd6f4;font-family:monospace;font-size:13px"><code>${code.trim().replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
-      </div>`)
-    .replace(/^### (.+)$/gm,'<h3 style="font-size:15px;font-weight:700;margin:18px 0 6px;color:#1c1917">$1</h3>')
-    .replace(/^## (.+)$/gm,'<h2 style="font-size:18px;font-weight:700;margin:22px 0 8px;color:#1c1917;border-bottom:1px solid #e7e5e0;padding-bottom:6px">$1</h2>')
-    .replace(/^# (.+)$/gm,'<h1 style="font-size:22px;font-weight:800;margin:24px 0 10px;color:#0f172a">$1</h1>')
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g,'<em>$1</em>')
-    .replace(/`([^`]+)`/g,'<code style="background:#f0ede8;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.85em;color:#9a3412">$1</code>')
-    .replace(/^[-*] (.+)$/gm,'<li style="margin:3px 0 3px 18px;line-height:1.7">$1</li>')
-    .replace(/^(\d+)\. (.+)$/gm,'<li style="margin:3px 0 3px 18px;line-height:1.7">$2</li>')
-    .replace(/\n\n/g,'<br/><br/>').replace(/\n/g,'<br/>');
-}
-
-// ── Key Setup Screen ──────────────────────────────────────────────────────────
-function KeySetup({ onSave }) {
-  const [key, setKey] = useState('');
-  const [show, setShow] = useState(false);
-  const [error, setError] = useState('');
-  const [status, setStatus] = useState('');
-  const [testing, setTesting] = useState(false);
-
-  const save = async () => {
-    const k = key.trim();
-    if (!k.startsWith('sk-ant-')) { setError('Key must start with sk-ant- — copy the full key from console.anthropic.com'); return; }
-    if (k.length < 40) { setError('Key looks incomplete — make sure you copied all of it.'); return; }
-    setTesting(true); setError(''); setStatus('Connecting to Anthropic...');
-    for (const model of MODELS) {
-      setStatus('Testing model: ' + model + '...');
-      try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: HEADERS_FOR(k),
-          body: JSON.stringify({ model, max_tokens: 10, messages: [{ role: 'user', content: 'hi' }] })
-        });
-        const data = await res.json();
-        if (!data.error) {
-          localStorage.setItem('ai_api_key', k);
-          localStorage.setItem('ai_model', model);
-          setStatus(''); setTesting(false);
-          onSave(k, model); return;
-        }
-        const t = data.error.type || '';
-        if (t === 'authentication_error') {
-          setError('Invalid API key. Get a fresh one at console.anthropic.com → API Keys.'); setStatus(''); setTesting(false); return;
-        }
-        if (t === 'billing_error' || (data.error.message||'').includes('credit') || (data.error.message||'').includes('balance')) {
-          setError('💳 No credits. Go to console.anthropic.com → Billing → Add $5 credit, then try again.'); setStatus(''); setTesting(false); return;
-        }
-        if (t === 'not_found_error') {
-          // model not available on this plan, try next model in list
-          continue;
-        }
-        setError('❌ Error: ' + (data.error.message || 'Unknown')); setStatus(''); setTesting(false); return;
-      } catch(e) {
-        setError('Connection failed — check your internet connection.'); setStatus(''); setTesting(false); return;
-      }
-    }
-    setError('Could not access any model. Make sure billing is set up: console.anthropic.com → Billing'); setStatus(''); setTesting(false);
-  };
-
-  return (
-    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#f9f7f4',padding:20}}>
-      <div style={{background:'#fff',borderRadius:18,border:'1px solid #e7e5e0',padding:'36px 32px',maxWidth:440,width:'100%',boxShadow:'0 4px 32px rgba(0,0,0,.07)'}}>
-        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:28}}>
-          <div style={{width:42,height:42,borderRadius:12,background:'linear-gradient(135deg,#c96442,#7c3f2b)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-            <span style={{color:'#fff',fontSize:20}}>✦</span>
-          </div>
-          <div>
-            <div style={{fontSize:18,fontWeight:800,color:'#1c1917',letterSpacing:'-0.03em'}}>My AI Assistant</div>
-            <div style={{fontSize:12,color:'#a8a29e'}}>Personal senior developer AI</div>
-          </div>
-        </div>
-        <h2 style={{fontSize:16,fontWeight:700,color:'#1c1917',marginBottom:6}}>Enter your Anthropic API Key</h2>
-        <p style={{fontSize:13,color:'#78716c',lineHeight:1.65,marginBottom:20}}>
-          Your key is saved only on this device. Get it at <a href="https://console.anthropic.com" target="_blank" style={{color:'#c96442',textDecoration:'underline'}}>console.anthropic.com</a> → API Keys → Create Key.
-        </p>
-        <div style={{position:'relative',marginBottom:12}}>
-          <input type={show?'text':'password'} value={key} onChange={e=>{setKey(e.target.value);setError('');}}
-            onKeyDown={e=>e.key==='Enter'&&save()}
-            placeholder="sk-ant-api03-..."
-            style={{width:'100%',padding:'12px 48px 12px 14px',border:`1.5px solid ${error?'#ef4444':'#e7e5e0'}`,borderRadius:10,fontSize:14,fontFamily:'monospace',color:'#1c1917',background:'#fafaf9',outline:'none'}}
-            onFocus={e=>e.target.style.borderColor='#c96442'} onBlur={e=>e.target.style.borderColor=error?'#ef4444':'#e7e5e0'} />
-          <button onClick={()=>setShow(s=>!s)} style={{position:'absolute',right:12,top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',fontSize:16,color:'#a8a29e'}}>{show?'🙈':'👁️'}</button>
-        </div>
-        {error && <div style={{fontSize:12,color:'#dc2626',marginBottom:12,lineHeight:1.6,background:'#fef2f2',border:'1px solid #fecaca',borderRadius:8,padding:'8px 12px'}}>⚠️ {error}</div>}
-        {status && !error && <div style={{fontSize:12,color:'#92400e',marginBottom:12,lineHeight:1.6,background:'#fffbeb',border:'1px solid #fde68a',borderRadius:8,padding:'8px 12px'}}>⏳ {status}</div>}
-        <button onClick={save} disabled={!key.trim()||testing}
-          style={{width:'100%',padding:'13px',background:key.trim()&&!testing?'#1c1917':'#e7e5e0',color:key.trim()&&!testing?'#fff':'#a8a29e',border:'none',borderRadius:10,fontSize:15,fontWeight:600,cursor:key.trim()&&!testing?'pointer':'not-allowed',transition:'all .2s',fontFamily:'inherit',display:'flex',alignItems:'center',justifyContent:'center',gap:8}}>
-          {testing ? <><span style={{width:16,height:16,border:'2px solid #a8a29e',borderTopColor:'#fff',borderRadius:'50%',display:'inline-block',animation:'spin .7s linear infinite'}} />Testing...</> : '✓ Save & Start Chatting'}
-        </button>
-        <div style={{marginTop:16,background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:10,padding:'12px 14px',display:'flex',gap:10}}>
-          <span style={{fontSize:16,flexShrink:0}}>🔒</span>
-          <p style={{fontSize:12,color:'#166534',lineHeight:1.6,margin:0}}><strong>Your key stays on your device.</strong> Saved in browser local storage only — never on GitHub or any server.</p>
-        </div>
-        <div style={{marginTop:10,background:'#fffbeb',border:'1px solid #fde68a',borderRadius:10,padding:'12px 14px',display:'flex',gap:10}}>
-          <span style={{fontSize:16,flexShrink:0}}>💳</span>
-          <p style={{fontSize:12,color:'#92400e',lineHeight:1.6,margin:0}}><strong>Need to add credits?</strong> Go to <a href="https://console.anthropic.com" target="_blank" style={{color:'#c96442',textDecoration:'underline'}}>console.anthropic.com</a> → Billing → Add $5. Each chat costs ~$0.01.</p>
-        </div>
+<div id="setup">
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">✦</div>
+      <div>
+        <div style="font-size:19px;font-weight:800;color:#1c1917;letter-spacing:-.03em">My AI Assistant</div>
+        <div style="font-size:12px;color:#a8a29e">Personal senior developer AI</div>
       </div>
     </div>
-  );
-}
-
-// ── Settings Panel ────────────────────────────────────────────────────────────
-function SettingsPanel({ model, onClose, onReset }) {
-  const masked = (localStorage.getItem('ai_api_key')||'').slice(0,16)+'••••••••••••';
-  return (
-    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.4)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:20}} onClick={e=>e.target===e.currentTarget&&onClose()}>
-      <div style={{background:'#fff',borderRadius:16,border:'1px solid #e7e5e0',padding:'28px 24px',maxWidth:380,width:'100%',boxShadow:'0 8px 40px rgba(0,0,0,.12)'}}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
-          <h3 style={{fontSize:16,fontWeight:700,color:'#1c1917'}}>⚙️ Settings</h3>
-          <button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:'#a8a29e'}}>×</button>
-        </div>
-        <div style={{background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:10,padding:'12px 14px',marginBottom:10}}>
-          <p style={{fontSize:12,color:'#166534',margin:'0 0 4px',fontWeight:600}}>🔒 API Key</p>
-          <p style={{fontSize:12,color:'#166534',fontFamily:'monospace',margin:0}}>{masked}</p>
-        </div>
-        <div style={{background:'#eff6ff',border:'1px solid #bfdbfe',borderRadius:10,padding:'12px 14px',marginBottom:16}}>
-          <p style={{fontSize:12,color:'#1d4ed8',margin:'0 0 4px',fontWeight:600}}>🤖 Active Model</p>
-          <p style={{fontSize:12,color:'#1d4ed8',fontFamily:'monospace',margin:0}}>{model}</p>
-        </div>
-        <button onClick={onReset} style={{width:'100%',padding:'11px',background:'#fef2f2',border:'1px solid #fecaca',borderRadius:10,color:'#dc2626',fontSize:14,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
-          🔄 Change API Key
-        </button>
-      </div>
+    <h2>Enter your Anthropic API Key</h2>
+    <p class="hint">Get your key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys → Create Key. Saved only on this device.</p>
+    <div class="iw">
+      <input type="password" id="ki" placeholder="sk-ant-api03-..." oninput="onKeyInput()"/>
+      <button class="eye" onclick="toggleEye()">👁️</button>
     </div>
-  );
+    <div class="errmsg" id="em"></div>
+    <div class="statusmsg" id="sm"></div>
+    <div class="debug" id="db"></div>
+    <button class="pbtn" id="sbtn" onclick="doTest()" disabled>✓ Save &amp; Start Chatting</button>
+    <div class="igrid">
+      <div class="ibox ig">🔒 <strong>Stays on device.</strong> Browser only — never on any server.</div>
+      <div class="ibox iy">💳 <strong>Need credits?</strong> Add $5 at console.anthropic.com → Billing.</div>
+    </div>
+  </div>
+</div>
+
+<div id="chat">
+  <div id="hdr">
+    <span id="ctitle">My AI Assistant</span>
+    <span id="mbadge">loading…</span>
+    <button class="hb" onclick="doReset()">⚙️ Key</button>
+    <button class="hb" onclick="doNew()">✏️ New</button>
+  </div>
+  <div id="msgs"><div id="inner"></div></div>
+  <div id="ia">
+    <div class="ib">
+      <textarea id="mi" rows="1" placeholder="Ask me to build an app, solve a problem, write code…"
+        oninput="ar(this);us()" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();go();}"></textarea>
+      <button id="sb" onclick="go()">↑</button>
+    </div>
+    <div class="fn">Your personal senior dev AI · Powered by Anthropic</div>
+  </div>
+</div>
+
+<script>
+var KEY='',MODEL='',HIST=[],BUSY=false;
+var MODELS=['claude-3-haiku-20240307','claude-3-5-haiku-20241022','claude-3-5-sonnet-20241022','claude-3-sonnet-20240229'];
+var CHIPS=['Build a weather app','Create a habit tracker','Write a snake game','Make a budget calculator','Build a landing page','Create a quiz app'];
+var SYSTEM='You are a brilliant senior full-stack developer and product strategist acting as a personal AI assistant. Your user is an entrepreneur with great ideas but minimal coding experience. Your job is to:\n- Turn their ideas into real, working apps and code\n- Explain technical concepts in plain English, never condescending\n- Always produce complete, copy-paste-ready code that works immediately\n- When asked to build something, produce a single complete self-contained HTML file with all CSS and JS inline\n- Be concise but thorough. No filler. High signal.';
+
+function H(k){return{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};}
+
+window.onload=function(){
+  KEY=localStorage.getItem('_k')||'';
+  MODEL=localStorage.getItem('_m')||'';
+  if(KEY&&MODEL){showChat();}
+  else{buildChips();}
+};
+
+function buildChips(){
+  // chips will be rebuilt in doNew
 }
 
-// ── Main App ──────────────────────────────────────────────────────────────────
-function App() {
-  const [apiKey, setApiKey] = useState(()=>localStorage.getItem('ai_api_key')||'');
-  const [model, setModel] = useState(()=>localStorage.getItem('ai_model')||'claude-3-haiku-20240307');
-  const [chats, setChats] = useState([{id:'1',title:'New conversation',messages:[],createdAt:Date.now()}]);
-  const [currentId, setCurrentId] = useState('1');
-  const [input, setInput] = useState('');
-  const [streaming, setStreaming] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [sidebar, setSidebar] = useState(true);
-  const [showSettings, setShowSettings] = useState(false);
-  const bottomRef = useRef(null);
-  const taRef = useRef(null);
+function onKeyInput(){
+  var v=document.getElementById('ki').value.trim();
+  document.getElementById('sbtn').disabled=!(v.startsWith('sk-ant-')&&v.length>40);
+  document.getElementById('em').style.display='none';
+}
 
-  const current = chats.find(c=>c.id===currentId);
-  const messages = current?.messages??[];
+function toggleEye(){
+  var i=document.getElementById('ki');
+  i.type=i.type==='password'?'text':'password';
+  i.nextElementSibling.textContent=i.type==='password'?'👁️':'🙈';
+}
 
-  useEffect(()=>{ setTimeout(()=>bottomRef.current?.scrollIntoView({behavior:'smooth'}),30); },[messages.length,streaming]);
+function se(msg){var e=document.getElementById('em');e.textContent=msg;e.style.display=msg?'block':'none';}
+function ss(msg){var e=document.getElementById('sm');e.textContent=msg;e.style.display=msg?'block':'none';}
+function sd(msg){var e=document.getElementById('db');e.textContent=msg;e.style.display=msg?'block':'none';}
 
-  if (!apiKey) return <KeySetup onSave={(k,m)=>{setApiKey(k);setModel(m||'claude-3-haiku-20240307');}} />;
-
-  const newChat = () => {
-    const id = Date.now().toString();
-    setChats(p=>[{id,title:'New conversation',messages:[],createdAt:Date.now()},...p]);
-    setCurrentId(id); setStreaming('');
-  };
-
-  const deleteChat = id => {
-    setChats(p=>p.filter(c=>c.id!==id));
-    if (currentId===id) setCurrentId(chats.find(c=>c.id!==id)?.id||'');
-  };
-
-  const send = async (text) => {
-    const t=(text||input).trim();
-    if(!t||loading) return;
-    setInput('');
-    if(taRef.current) taRef.current.style.height='auto';
-    const cid=currentId;
-    const userMsg={role:'user',content:t};
-    setChats(p=>p.map(c=>c.id===cid?{...c,title:c.title==='New conversation'?t.slice(0,40)+(t.length>40?'…':''):c.title,messages:[...c.messages,userMsg]}:c));
-    setLoading(true); setStreaming('');
-    try {
-      const history=[...(chats.find(c=>c.id===cid)?.messages??[]).map(m=>({role:m.role,content:m.content})),{role:'user',content:t}];
-      const res = await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST', headers:HEADERS_FOR(apiKey),
-        body:JSON.stringify({model,max_tokens:3000,system:SYSTEM,messages:history})
+async function doTest(){
+  var k=document.getElementById('ki').value.trim();
+  var btn=document.getElementById('sbtn');
+  btn.disabled=true;btn.textContent='⏳ Testing…';
+  se('');sd('');
+  for(var i=0;i<MODELS.length;i++){
+    var m=MODELS[i];
+    ss('Testing: '+m);
+    try{
+      var res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',headers:H(k),
+        body:JSON.stringify({model:m,max_tokens:10,messages:[{role:'user',content:'hi'}]})
       });
-      const data=await res.json();
-      if(data.error) throw new Error(data.error.message);
-      const reply=data.content?.[0]?.text||'No response';
-      let i=0;
-      const tick=setInterval(()=>{
-        i+=8; setStreaming(reply.slice(0,i));
-        if(i>=reply.length){ clearInterval(tick); setStreaming('');
-          setChats(p=>p.map(c=>c.id===cid?{...c,messages:[...c.messages,{role:'assistant',content:reply}]}:c));
-          setLoading(false); }
-      },10);
-    } catch(e) {
-      setStreaming('');
-      setChats(p=>p.map(c=>c.id===cid?{...c,messages:[...c.messages,{role:'assistant',content:`⚠️ **Error:** ${e.message}\n\nTry refreshing or go to ⚙️ Settings to re-enter your API key.`}]}:c));
-      setLoading(false);
+      var raw=await res.text();
+      sd('HTTP '+res.status+' on '+m+':\n'+raw);
+      var d;
+      try{d=JSON.parse(raw);}catch(pe){se('Bad JSON from server. See debug below.');btn.disabled=false;btn.textContent='✓ Save & Start Chatting';ss('');return;}
+      if(!d.error){
+        KEY=k;MODEL=m;
+        localStorage.setItem('_k',k);localStorage.setItem('_m',m);
+        ss('');sd('');showChat();return;
+      }
+      var t=d.error.type||'',msg=d.error.message||'';
+      if(t==='authentication_error'){se('❌ Invalid key — go to console.anthropic.com → API Keys and create a fresh one.');btn.disabled=false;btn.textContent='✓ Save & Start Chatting';ss('');return;}
+      if(t==='billing_error'||msg.indexOf('credit')>-1||msg.indexOf('balance')>-1){se('💳 Billing: '+msg+'\n\nGo to console.anthropic.com → Billing.');btn.disabled=false;btn.textContent='✓ Save & Start Chatting';ss('');return;}
+      if(t==='permission_error'){se('🔒 Permission: '+msg);btn.disabled=false;btn.textContent='✓ Save & Start Chatting';ss('');return;}
+      // not_found: try next
+    }catch(ne){
+      sd('Network error on '+m+': '+ne.message);
+      se('🌐 Network error: '+ne.message+'\n\nTry: Switch WiFi↔Mobile data, or use Chrome Incognito.');
+      btn.disabled=false;btn.textContent='✓ Save & Start Chatting';ss('');return;
     }
-  };
-
-  const chips=['Build a weather app','Create a habit tracker','Write a snake game','Make a budget calculator','Build a landing page','Create a quiz app'];
-
-  return (
-    <div style={{display:'flex',height:'100vh',overflow:'hidden',background:'#fff'}}>
-      {showSettings&&<SettingsPanel model={model} onClose={()=>setShowSettings(false)} onReset={()=>{localStorage.removeItem('ai_api_key');localStorage.removeItem('ai_model');setApiKey('');setShowSettings(false);}} />}
-
-      {/* Sidebar */}
-      <div style={{width:sidebar?240:0,minWidth:sidebar?240:0,background:'#f9f7f4',borderRight:'1px solid #e7e5e0',display:'flex',flexDirection:'column',overflow:'hidden',transition:'all .25s',flexShrink:0}}>
-        <div style={{padding:'14px 12px',borderBottom:'1px solid #e7e5e0'}}>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
-            <div style={{display:'flex',alignItems:'center',gap:7}}>
-              <div style={{width:26,height:26,borderRadius:7,background:'linear-gradient(135deg,#c96442,#7c3f2b)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                <span style={{color:'#fff',fontSize:13}}>✦</span>
-              </div>
-              <span style={{fontSize:14,fontWeight:700,color:'#1c1917',letterSpacing:'-0.02em'}}>My AI</span>
-            </div>
-            <button onClick={()=>setSidebar(false)} style={{background:'none',border:'none',cursor:'pointer',color:'#a8a29e',fontSize:16}}>←</button>
-          </div>
-          <button onClick={newChat} style={{display:'flex',alignItems:'center',gap:7,width:'100%',background:'#fff',border:'1px solid #e7e5e0',borderRadius:8,padding:'8px 11px',cursor:'pointer',fontSize:13,color:'#44403c',fontFamily:'inherit',fontWeight:500,boxShadow:'0 1px 2px rgba(0,0,0,.04)'}}>
-            ✏️ New chat
-          </button>
-        </div>
-        <div style={{flex:1,overflowY:'auto',padding:'8px'}}>
-          {chats.map(c=>(
-            <div key={c.id} style={{display:'flex',alignItems:'center',gap:4,marginBottom:1}}>
-              <div onClick={()=>setCurrentId(c.id)} style={{flex:1,padding:'8px 10px',borderRadius:8,cursor:'pointer',background:currentId===c.id?'#f0ede8':'transparent',border:currentId===c.id?'1px solid #e0d8cf':'1px solid transparent',fontSize:13,color:currentId===c.id?'#1c1917':'#57534e',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',fontWeight:currentId===c.id?500:400,transition:'all .12s'}}>
-                💬 {c.title}
-              </div>
-              <button onClick={()=>deleteChat(c.id)} style={{background:'none',border:'none',color:'#d4c9c0',cursor:'pointer',fontSize:16,padding:'4px',borderRadius:4,flexShrink:0}}
-                onMouseEnter={e=>e.target.style.color='#ef4444'} onMouseLeave={e=>e.target.style.color='#d4c9c0'}>×</button>
-            </div>
-          ))}
-        </div>
-        <div style={{padding:'12px',borderTop:'1px solid #e7e5e0'}}>
-          <button onClick={()=>setShowSettings(true)} style={{display:'flex',alignItems:'center',gap:8,width:'100%',background:'none',border:'1px solid #e7e5e0',borderRadius:8,padding:'8px 11px',cursor:'pointer',fontSize:12,color:'#78716c',fontFamily:'inherit'}}
-            onMouseEnter={e=>e.currentTarget.style.background='#f5f4f2'} onMouseLeave={e=>e.currentTarget.style.background='none'}>
-            ⚙️ Settings &amp; API Key
-          </button>
-        </div>
-      </div>
-
-      {/* Main */}
-      <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
-        <div style={{display:'flex',alignItems:'center',gap:10,padding:'11px 18px',borderBottom:'1px solid #f0ede8',flexShrink:0}}>
-          {!sidebar&&<button onClick={()=>setSidebar(true)} style={{background:'none',border:'1px solid #e7e5e0',borderRadius:7,padding:'5px 10px',cursor:'pointer',fontSize:13,color:'#78716c'}}>☰</button>}
-          <span style={{fontSize:14,fontWeight:600,color:'#1c1917',flex:1}}>{current?.title||'My AI Assistant'}</span>
-          <span style={{fontSize:10,background:'#f0ede8',color:'#9a3412',padding:'3px 9px',borderRadius:10,fontWeight:500,fontFamily:'monospace'}}>{model.split('-').slice(0,3).join('-')}</span>
-          <button onClick={()=>setShowSettings(true)} style={{background:'none',border:'1px solid #e7e5e0',borderRadius:7,padding:'5px 9px',cursor:'pointer',fontSize:14,color:'#78716c'}}>⚙️</button>
-        </div>
-
-        <div style={{flex:1,overflowY:'auto',padding:'24px 0'}}>
-          {messages.length===0&&!streaming?(
-            <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:24,padding:'40px 20px',minHeight:'60%'}}>
-              <div style={{width:56,height:56,borderRadius:16,background:'linear-gradient(135deg,#c96442,#7c3f2b)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 4px 20px rgba(201,100,66,.25)'}}>
-                <span style={{color:'#fff',fontSize:26}}>✦</span>
-              </div>
-              <div style={{textAlign:'center'}}>
-                <div style={{fontSize:24,fontWeight:800,color:'#1c1917',letterSpacing:'-0.03em',marginBottom:8}}>Your Personal AI</div>
-                <div style={{fontSize:14,color:'#78716c',maxWidth:320,lineHeight:1.7}}>Senior developer + product strategist. Build apps, solve problems, ship ideas.</div>
-              </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,maxWidth:480,width:'100%'}}>
-                {chips.map((c,i)=>(
-                  <button key={i} onClick={()=>send(c)} style={{background:'#fafaf9',border:'1px solid #e7e5e0',borderRadius:10,padding:'12px 14px',cursor:'pointer',fontSize:12,color:'#44403c',fontFamily:'inherit',textAlign:'left',lineHeight:1.5,transition:'all .15s'}}
-                    onMouseEnter={e=>e.currentTarget.style.background='#f0ede8'} onMouseLeave={e=>e.currentTarget.style.background='#fafaf9'}>
-                    {c}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ):(
-            <div style={{maxWidth:720,margin:'0 auto',padding:'0 18px'}}>
-              {[...messages,...(streaming?[{role:'assistant',content:streaming,isStreaming:true}]:[])].map((m,i)=>(
-                <div key={i} style={{display:'flex',flexDirection:m.role==='user'?'row-reverse':'row',gap:12,marginBottom:24,alignItems:'flex-start'}}>
-                  {m.role==='assistant'&&(
-                    <div style={{width:30,height:30,borderRadius:8,background:'linear-gradient(135deg,#c96442,#7c3f2b)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:2}}>
-                      <span style={{color:'#fff',fontSize:14}}>✦</span>
-                    </div>
-                  )}
-                  <div style={{maxWidth:m.role==='user'?'78%':'100%',flex:m.role==='assistant'?1:undefined}}>
-                    {m.role==='user'?(
-                      <div style={{background:'#1c1917',color:'#fafaf9',padding:'11px 16px',borderRadius:'16px 16px 4px 16px',fontSize:15,lineHeight:1.65,whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{m.content}</div>
-                    ):(
-                      <div>
-                        <div style={{fontSize:12,fontWeight:600,color:'#78716c',marginBottom:6,display:'flex',alignItems:'center',gap:6}}>
-                          Assistant {m.isStreaming&&<span style={{width:6,height:6,borderRadius:'50%',background:'#c96442',display:'inline-block',animation:'blink 1s ease-in-out infinite'}}/>}
-                        </div>
-                        <div style={{fontSize:15,color:'#1c1917',lineHeight:1.75}} dangerouslySetInnerHTML={{__html:md(m.content)}} />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-              <div ref={bottomRef} />
-            </div>
-          )}
-          {messages.length===0&&!streaming&&<div ref={bottomRef} />}
-        </div>
-
-        <div style={{padding:'12px 18px 18px',flexShrink:0,maxWidth:720,width:'100%',margin:'0 auto'}}>
-          <div style={{display:'flex',gap:8,background:'#fff',border:'1.5px solid #e7e5e0',borderRadius:14,padding:'10px 12px',boxShadow:'0 1px 4px rgba(0,0,0,.06)',alignItems:'flex-end'}}>
-            <textarea ref={taRef} value={input} onChange={e=>setInput(e.target.value)}
-              onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}}
-              placeholder="Ask me to build an app, solve a problem, write code…" rows={1}
-              style={{flex:1,background:'none',border:'none',outline:'none',resize:'none',fontSize:15,lineHeight:1.6,color:'#1c1917',fontFamily:'inherit',maxHeight:160,overflowY:'auto'}}
-              onInput={e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,160)+'px';}} />
-            <button onClick={()=>send()} disabled={!input.trim()||loading}
-              style={{width:36,height:36,borderRadius:9,border:'none',background:input.trim()&&!loading?'#1c1917':'#e7e5e0',color:input.trim()&&!loading?'#fff':'#a8a29e',cursor:input.trim()&&!loading?'pointer':'not-allowed',fontSize:16,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,transition:'all .2s'}}>
-              {loading?<span style={{width:16,height:16,border:'2px solid #fff',borderTopColor:'transparent',borderRadius:'50%',display:'inline-block',animation:'spin .7s linear infinite'}}/>:'↑'}
-            </button>
-          </div>
-          <p style={{textAlign:'center',fontSize:11,color:'#c4b9b0',marginTop:7}}>Your personal senior dev AI · Powered by Claude</p>
-        </div>
-      </div>
-    </div>
-  );
+  }
+  se('⚠️ Could not access any model.\n\nThe debug panel shows the exact API responses.\nWait 10 mins after adding billing then retry.\nOr create a brand new API key at console.anthropic.com.');
+  btn.disabled=false;btn.textContent='✓ Save & Start Chatting';ss('');
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+function showChat(){
+  document.getElementById('setup').style.display='none';
+  document.getElementById('chat').style.display='flex';
+  document.getElementById('mbadge').textContent=MODEL;
+  doNew();
+}
+
+function doReset(){
+  if(!confirm('Change API key and clear chat?'))return;
+  localStorage.removeItem('_k');localStorage.removeItem('_m');
+  KEY='';MODEL='';HIST=[];
+  document.getElementById('chat').style.display='none';
+  document.getElementById('setup').style.display='flex';
+}
+
+function doNew(){
+  HIST=[];
+  var inner=document.getElementById('inner');
+  inner.innerHTML='';
+  var w=document.createElement('div');w.className='welcome';
+  w.innerHTML='<div class="wi">✦</div><div><div class="wt">Your Personal AI</div><div class="ws">Senior developer + product strategist. Build apps, solve problems, ship ideas.</div></div><div class="chips" id="chiprow"></div>';
+  inner.appendChild(w);
+  var cr=document.getElementById('chiprow');
+  CHIPS.forEach(function(c){var b=document.createElement('button');b.className='chip';b.textContent=c;b.onclick=function(){go(c);};cr.appendChild(b);});
+  document.getElementById('ctitle').textContent='My AI Assistant';
+}
+
+function ar(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px';}
+function us(){var v=document.getElementById('mi').value.trim();var s=document.getElementById('sb');s.className=v&&!BUSY?'on':'';}
+
+function rmk(text){
+  text=text.replace(/```(\w*)\n?([\s\S]*?)```/g,function(_,lang,code){
+    var id='c'+Math.random().toString(36).slice(2,7);
+    var esc=code.trim().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return '<div class="cb"><div class="ch"><span class="cl">'+(lang||'code')+'</span><button class="cpb" onclick="navigator.clipboard.writeText(document.getElementById(\''+id+'\').textContent)">Copy</button></div><pre class="cp"><code id="'+id+'">'+esc+'</code></pre></div>';
+  });
+  text=text.replace(/^### (.+)$/gm,'<h3>$1</h3>');
+  text=text.replace(/^## (.+)$/gm,'<h2>$1</h2>');
+  text=text.replace(/^# (.+)$/gm,'<h1>$1</h1>');
+  text=text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  text=text.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  text=text.replace(/`([^`]+)`/g,'<code>$1</code>');
+  text=text.replace(/^[-*] (.+)$/gm,'<li>$1</li>');
+  text=text.replace(/^(\d+)\. (.+)$/gm,'<li>$2</li>');
+  text=text.replace(/\n\n/g,'<br/><br/>').replace(/\n/g,'<br/>');
+  return text;
+}
+
+function addMsg(role,content){
+  var w=document.querySelector('.welcome');if(w)w.remove();
+  var inner=document.getElementById('inner');
+  var row=document.createElement('div');row.className='mrow'+(role==='user'?' u':'');
+  if(role==='user'){
+    row.innerHTML='<div class="bw uw"><div class="ububble">'+content.replace(/</g,'&lt;')+'</div></div>';
+  } else {
+    row.innerHTML='<div class="av">✦</div><div class="bw"><div class="lbl">Assistant <span class="dot" id="ddot"></span></div><div class="aic" id="aist"></div></div>';
+  }
+  inner.appendChild(row);
+  row.scrollIntoView({behavior:'smooth',block:'end'});
+  return row;
+}
+
+async function go(text){
+  var mi=document.getElementById('mi');
+  var t=(text||mi.value).trim();
+  if(!t||BUSY)return;
+  mi.value='';mi.style.height='auto';us();
+  if(document.getElementById('ctitle').textContent==='My AI Assistant')document.getElementById('ctitle').textContent=t.slice(0,40);
+  HIST.push({role:'user',content:t});
+  addMsg('user',t);
+  BUSY=true;
+  var sb=document.getElementById('sb');sb.innerHTML='<div class="sp"></div>';sb.className='';
+  addMsg('assistant','');
+  var aist=document.getElementById('aist');
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:H(KEY),
+      body:JSON.stringify({model:MODEL,max_tokens:3000,system:SYSTEM,messages:HIST})
+    });
+    var data=await res.json();
+    if(data.error)throw new Error(data.error.message||'API error');
+    var reply=data.content&&data.content[0]&&data.content[0].text||'No response';
+    HIST.push({role:'assistant',content:reply});
+    var i=0;
+    var tick=setInterval(function(){
+      i+=8;aist.innerHTML=rmk(reply.slice(0,i));
+      aist.scrollIntoView({behavior:'smooth',block:'end'});
+      if(i>=reply.length){
+        clearInterval(tick);
+        var d=document.getElementById('ddot');if(d)d.remove();
+        BUSY=false;sb.textContent='↑';us();
+      }
+    },10);
+  }catch(e){
+    aist.innerHTML='<span style="color:#ef4444">⚠️ '+e.message+'</span>';
+    var d=document.getElementById('ddot');if(d)d.remove();
+    BUSY=false;sb.textContent='↑';us();
+  }
+}
 </script>
 </body>
 </html>
