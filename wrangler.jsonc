@@ -1,5 +1,11 @@
 {
   "name": "my-ai-app",
   "main": "worker.js",
-  "compatibility_date": "2024-01-01"
+  "compatibility_date": "2024-01-01",
+  "kv_namespaces": [
+    {
+      "binding": "CHATS",
+      "id": "b08341119d8d48ee986f1fd335493afd"
+    }
+  ]
 }
