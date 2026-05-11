@@ -6,49 +6,54 @@ export default {
       return new Response(null, {
         headers: {
           'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type',
         }
       });
     }
 
-    // POST = API proxy to Anthropic
-    if (request.method === 'POST') {
-      try {
-        const body = await request.json();
+    // Only handle POST requests
+    if (request.method !== 'POST') {
+      return new Response('My AI Proxy is running ✓', {
+        headers: { 'Content-Type': 'text/plain' }
+      });
+    }
 
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': env.ANTHROPIC_API_KEY,
-            'anthropic-version': '2023-06-01',
-          },
-          body: JSON.stringify(body),
-        });
+    // Proxy POST to Anthropic
+    try {
+      const body = await request.json();
 
-        const data = await response.json();
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify(body),
+      });
 
-        return new Response(JSON.stringify(data), {
-          status: response.status,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-          }
-        });
+      const data = await response.json();
 
-      } catch (err) {
-        return new Response(JSON.stringify({ error: { message: err.message } }), {
+      return new Response(JSON.stringify(data), {
+        status: response.status,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        }
+      });
+
+    } catch (err) {
+      return new Response(
+        JSON.stringify({ error: { type: 'worker_error', message: err.message } }),
+        {
           status: 500,
           headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
           }
-        });
-      }
+        }
+      );
     }
-
-    // GET = serve the HTML app from static assets
-    return env.ASSETS.fetch(request);
   }
 };
