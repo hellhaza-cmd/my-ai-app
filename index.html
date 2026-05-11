@@ -11,34 +11,34 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f9f7f4;height:100vh
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 #setup{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#fdf6f0,#f5ede4);padding:20px}
-.card{background:#fff;border-radius:20px;border:1px solid #e7e5e0;padding:32px 26px;max-width:420px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.08)}
-.logo{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+.card{background:#fff;border-radius:20px;border:1px solid #e7e5e0;padding:32px 26px;max-width:440px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.08)}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:24px}
 .logo-icon{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#c96442,#7c3f2b);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;flex-shrink:0}
+.logo-name{font-size:19px;font-weight:800;color:#1c1917;letter-spacing:-.03em}
+.logo-sub{font-size:12px;color:#a8a29e}
 h2{font-size:15px;font-weight:700;color:#1c1917;margin-bottom:5px}
-.hint{font-size:13px;color:#78716c;line-height:1.65;margin-bottom:18px}
+.hint{font-size:13px;color:#78716c;line-height:1.65;margin-bottom:14px}
 .hint a{color:#c96442}
-.iw{position:relative;margin-bottom:10px}
-.iw input{width:100%;padding:12px 46px 12px 14px;border:1.5px solid #e7e5e0;border-radius:10px;font-size:13px;font-family:monospace;color:#1c1917;background:#fafaf9;outline:none}
+label{display:block;font-size:12px;font-weight:600;color:#57534e;margin-bottom:5px;margin-top:12px}
+.iw{position:relative;margin-bottom:6px}
+.iw input{width:100%;padding:11px 44px 11px 13px;border:1.5px solid #e7e5e0;border-radius:10px;font-size:13px;font-family:monospace;color:#1c1917;background:#fafaf9;outline:none;transition:border-color .2s}
 .iw input:focus{border-color:#c96442}
-.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px}
-.errmsg{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 13px;font-size:13px;color:#991b1b;margin-bottom:12px;line-height:1.6;white-space:pre-wrap;display:none}
-.statusmsg{background:#eff6ff;border:1px solid #93c5fd;border-radius:8px;padding:8px 13px;font-size:12px;color:#1e40af;margin-bottom:10px;display:none}
-.debug{background:#111;border-radius:8px;padding:12px;font-size:11px;font-family:monospace;color:#4ade80;margin-bottom:12px;line-height:1.6;white-space:pre-wrap;word-break:break-all;max-height:180px;overflow-y:auto;display:none}
-.pbtn{width:100%;padding:13px;background:#1c1917;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.eye{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:15px;color:#a8a29e;padding:0}
+.errmsg{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 13px;font-size:13px;color:#991b1b;margin-bottom:10px;line-height:1.6;white-space:pre-wrap;display:none}
+.okmsg{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 13px;font-size:13px;color:#166534;margin-bottom:10px;line-height:1.6;display:none}
+.statusmsg{background:#eff6ff;border:1px solid #93c5fd;border-radius:8px;padding:8px 13px;font-size:12px;color:#1e40af;margin-bottom:8px;display:none}
+.pbtn{width:100%;padding:13px;background:#1c1917;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:6px;transition:all .2s}
 .pbtn:disabled{background:#e7e5e0;color:#a8a29e;cursor:not-allowed}
-.igrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
-.ibox{border-radius:10px;padding:11px 13px;font-size:12px;line-height:1.6}
-.ig{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
-.iy{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+.note{margin-top:14px;background:#fef9ec;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;font-size:12px;color:#92400e;line-height:1.6}
 #chat{display:none;flex-direction:column;height:100vh}
 #hdr{display:flex;align-items:center;gap:10px;padding:11px 18px;border-bottom:1px solid #f0ede8;background:#fff;flex-shrink:0}
-#ctitle{font-size:14px;font-weight:600;color:#1c1917;flex:1}
-#mbadge{font-size:10px;background:#f0ede8;color:#9a3412;padding:3px 9px;border-radius:10px;font-weight:600;font-family:monospace}
-.hb{background:none;border:1px solid #e7e5e0;border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;color:#78716c}
+#ctitle{font-size:14px;font-weight:600;color:#1c1917;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#mbadge{font-size:10px;background:#f0ede8;color:#9a3412;padding:3px 9px;border-radius:10px;font-weight:600;font-family:monospace;white-space:nowrap}
+.hb{background:none;border:1px solid #e7e5e0;border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;color:#78716c;white-space:nowrap}
 #msgs{flex:1;overflow-y:auto;padding:24px 0}
 #inner{max-width:720px;margin:0 auto;padding:0 18px}
 .welcome{display:flex;flex-direction:column;align-items:center;gap:22px;padding:40px 20px;min-height:60vh}
-.wi{width:58px;height:58px;border-radius:16px;background:linear-gradient(135deg,#c96442,#7c3f2b);display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;box-shadow:0 4px 20px rgba(201,100,66,.25);margin:0 auto}
+.wi{width:58px;height:58px;border-radius:16px;background:linear-gradient(135deg,#c96442,#7c3f2b);display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;box-shadow:0 4px 20px rgba(201,100,66,.25)}
 .wt{font-size:24px;font-weight:800;color:#1c1917;letter-spacing:-.03em;text-align:center}
 .ws{font-size:14px;color:#78716c;max-width:300px;line-height:1.7;text-align:center}
 .chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:460px;width:100%}
@@ -62,7 +62,7 @@ h2{font-size:15px;font-weight:700;color:#1c1917;margin-bottom:5px}
 .ch{background:#1a1b26;padding:7px 14px;display:flex;justify-content:space-between;align-items:center}
 .cl{color:#7aa2f7;font-family:monospace;font-size:11px}
 .cpb{background:none;border:1px solid #2a2f45;border-radius:4px;color:#565f89;cursor:pointer;font-size:11px;padding:2px 9px}
-.cp{background:#0f1117;padding:16px;overflow-x:auto;margin:0;line-height:1.7;color:#cdd6f4;font-family:monospace;font-size:13px}
+.cpr{background:#0f1117;padding:16px;overflow-x:auto;margin:0;line-height:1.7;color:#cdd6f4;font-family:monospace;font-size:13px}
 #ia{padding:12px 18px 18px;flex-shrink:0;max-width:720px;width:100%;margin:0 auto}
 .ib{display:flex;gap:8px;background:#fff;border:1.5px solid #e7e5e0;border-radius:14px;padding:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06);align-items:flex-end}
 .ib:focus-within{border-color:#c9b8a0}
@@ -76,37 +76,58 @@ h2{font-size:15px;font-weight:700;color:#1c1917;margin-bottom:5px}
 </head>
 <body>
 
+<!-- SETUP -->
 <div id="setup">
   <div class="card">
     <div class="logo">
       <div class="logo-icon">✦</div>
       <div>
-        <div style="font-size:19px;font-weight:800;color:#1c1917;letter-spacing:-.03em">My AI Assistant</div>
-        <div style="font-size:12px;color:#a8a29e">Personal senior developer AI</div>
+        <div class="logo-name">My AI Assistant</div>
+        <div class="logo-sub">Personal senior developer AI</div>
       </div>
     </div>
-    <h2>Enter your Anthropic API Key</h2>
-    <p class="hint">Get your key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys → Create Key. Saved only on this device.</p>
+
+    <h2>One-time setup</h2>
+    <p class="hint">Enter your Cloudflare Worker URL and choose a model. Your API key is stored securely in your Worker — not in this app.</p>
+
+    <label>Your Cloudflare Worker URL</label>
     <div class="iw">
-      <input type="password" id="ki" placeholder="sk-ant-api03-..." oninput="onKeyInput()"/>
-      <button class="eye" onclick="toggleEye()">👁️</button>
+      <input type="text" id="wurl" placeholder="https://my-ai-proxy.your-name.workers.dev" oninput="onInput()"/>
     </div>
+
+    <label>Model</label>
+    <select id="model" style="width:100%;padding:11px 13px;border:1.5px solid #e7e5e0;border-radius:10px;font-size:13px;font-family:inherit;color:#1c1917;background:#fafaf9;outline:none;margin-bottom:4px">
+      <option value="claude-3-haiku-20240307">Claude 3 Haiku — fast &amp; cheap ⚡</option>
+      <option value="claude-3-5-haiku-20241022">Claude 3.5 Haiku — smart &amp; fast</option>
+      <option value="claude-3-5-sonnet-20241022" selected>Claude 3.5 Sonnet — best quality ✦</option>
+      <option value="claude-3-sonnet-20240229">Claude 3 Sonnet</option>
+    </select>
+
     <div class="errmsg" id="em"></div>
+    <div class="okmsg" id="ok"></div>
     <div class="statusmsg" id="sm"></div>
-    <div class="debug" id="db"></div>
-    <button class="pbtn" id="sbtn" onclick="doTest()" disabled>✓ Save &amp; Start Chatting</button>
-    <div class="igrid">
-      <div class="ibox ig">🔒 <strong>Stays on device.</strong> Browser only — never on any server.</div>
-      <div class="ibox iy">💳 <strong>Need credits?</strong> Add $5 at console.anthropic.com → Billing.</div>
+
+    <button class="pbtn" id="tbtn" onclick="doTest()" disabled>▶ Test Connection</button>
+    <button class="pbtn" id="sbtn" onclick="doSave()" style="display:none;background:#166534;margin-top:8px">✓ Save &amp; Start Chatting</button>
+
+    <div class="note">
+      <strong>📋 Don't have a Worker URL yet?</strong><br/>
+      1. Sign up free at <a href="https://cloudflare.com" target="_blank" style="color:#c96442">cloudflare.com</a><br/>
+      2. Go to <strong>Workers &amp; Pages → Create Worker</strong><br/>
+      3. Name it <code style="background:#fde68a;padding:1px 4px;border-radius:3px">my-ai-proxy</code> → Deploy<br/>
+      4. Paste the <strong>worker.js</strong> code → Deploy again<br/>
+      5. Settings → Variables → add <code style="background:#fde68a;padding:1px 4px;border-radius:3px">ANTHROPIC_API_KEY</code> = your key<br/>
+      6. Copy your Worker URL and paste above
     </div>
   </div>
 </div>
 
+<!-- CHAT -->
 <div id="chat">
   <div id="hdr">
     <span id="ctitle">My AI Assistant</span>
-    <span id="mbadge">loading…</span>
-    <button class="hb" onclick="doReset()">⚙️ Key</button>
+    <span id="mbadge">Claude</span>
+    <button class="hb" onclick="doReset()">⚙️ Settings</button>
     <button class="hb" onclick="doNew()">✏️ New</button>
   </div>
   <div id="msgs"><div id="inner"></div></div>
@@ -116,105 +137,93 @@ h2{font-size:15px;font-weight:700;color:#1c1917;margin-bottom:5px}
         oninput="ar(this);us()" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();go();}"></textarea>
       <button id="sb" onclick="go()">↑</button>
     </div>
-    <div class="fn">Your personal senior dev AI · Powered by Anthropic</div>
+    <div class="fn">Your personal senior dev AI · Powered by Claude</div>
   </div>
 </div>
 
 <script>
-var KEY='',MODEL='',HIST=[],BUSY=false;
-var MODELS=['claude-3-haiku-20240307','claude-3-5-haiku-20241022','claude-3-5-sonnet-20241022','claude-3-sonnet-20240229'];
+var WURL='', MODEL='claude-3-5-sonnet-20241022', HIST=[], BUSY=false;
 var CHIPS=['Build a weather app','Create a habit tracker','Write a snake game','Make a budget calculator','Build a landing page','Create a quiz app'];
-var SYSTEM='You are a brilliant senior full-stack developer and product strategist acting as a personal AI assistant. Your user is an entrepreneur with great ideas but minimal coding experience. Your job is to:\n- Turn their ideas into real, working apps and code\n- Explain technical concepts in plain English, never condescending\n- Always produce complete, copy-paste-ready code that works immediately\n- When asked to build something, produce a single complete self-contained HTML file with all CSS and JS inline\n- Be concise but thorough. No filler. High signal.';
-
-function H(k){return{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};}
+var SYSTEM='You are a brilliant senior full-stack developer and product strategist acting as a personal AI assistant. Your user is an entrepreneur with great ideas but minimal coding experience. Your job is to:\n- Turn their ideas into real working apps and code\n- Explain technical concepts in plain English, never condescending\n- Always produce complete, copy-paste-ready code that works immediately\n- When asked to build something, produce a single complete self-contained HTML file with all CSS and JS inline\n- Be concise but thorough. No filler. High signal.';
 
 window.onload=function(){
-  KEY=localStorage.getItem('_k')||'';
-  MODEL=localStorage.getItem('_m')||'';
-  if(KEY&&MODEL){showChat();}
-  else{buildChips();}
+  WURL=localStorage.getItem('_wurl')||'';
+  MODEL=localStorage.getItem('_model')||'claude-3-5-sonnet-20241022';
+  if(WURL){showChat();}
 };
 
-function buildChips(){
-  // chips will be rebuilt in doNew
-}
-
-function onKeyInput(){
-  var v=document.getElementById('ki').value.trim();
-  document.getElementById('sbtn').disabled=!(v.startsWith('sk-ant-')&&v.length>40);
+function onInput(){
+  var v=document.getElementById('wurl').value.trim();
+  document.getElementById('tbtn').disabled=!v.startsWith('https://');
   document.getElementById('em').style.display='none';
-}
-
-function toggleEye(){
-  var i=document.getElementById('ki');
-  i.type=i.type==='password'?'text':'password';
-  i.nextElementSibling.textContent=i.type==='password'?'👁️':'🙈';
+  document.getElementById('ok').style.display='none';
+  document.getElementById('sbtn').style.display='none';
 }
 
 function se(msg){var e=document.getElementById('em');e.textContent=msg;e.style.display=msg?'block':'none';}
+function so(msg){var e=document.getElementById('ok');e.textContent=msg;e.style.display=msg?'block':'none';}
 function ss(msg){var e=document.getElementById('sm');e.textContent=msg;e.style.display=msg?'block':'none';}
-function sd(msg){var e=document.getElementById('db');e.textContent=msg;e.style.display=msg?'block':'none';}
 
 async function doTest(){
-  var k=document.getElementById('ki').value.trim();
-  var btn=document.getElementById('sbtn');
+  var url=document.getElementById('wurl').value.trim();
+  var mdl=document.getElementById('model').value;
+  var btn=document.getElementById('tbtn');
   btn.disabled=true;btn.textContent='⏳ Testing…';
-  se('');sd('');
-  for(var i=0;i<MODELS.length;i++){
-    var m=MODELS[i];
-    ss('Testing: '+m);
-    try{
-      var res=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',headers:H(k),
-        body:JSON.stringify({model:m,max_tokens:10,messages:[{role:'user',content:'hi'}]})
-      });
-      var raw=await res.text();
-      sd('HTTP '+res.status+' on '+m+':\n'+raw);
-      var d;
-      try{d=JSON.parse(raw);}catch(pe){se('Bad JSON from server. See debug below.');btn.disabled=false;btn.textContent='✓ Save & Start Chatting';ss('');return;}
-      if(!d.error){
-        KEY=k;MODEL=m;
-        localStorage.setItem('_k',k);localStorage.setItem('_m',m);
-        ss('');sd('');showChat();return;
-      }
-      var t=d.error.type||'',msg=d.error.message||'';
-      if(t==='authentication_error'){se('❌ Invalid key — go to console.anthropic.com → API Keys and create a fresh one.');btn.disabled=false;btn.textContent='✓ Save & Start Chatting';ss('');return;}
-      if(t==='billing_error'||msg.indexOf('credit')>-1||msg.indexOf('balance')>-1){se('💳 Billing: '+msg+'\n\nGo to console.anthropic.com → Billing.');btn.disabled=false;btn.textContent='✓ Save & Start Chatting';ss('');return;}
-      if(t==='permission_error'){se('🔒 Permission: '+msg);btn.disabled=false;btn.textContent='✓ Save & Start Chatting';ss('');return;}
-      // not_found: try next
-    }catch(ne){
-      sd('Network error on '+m+': '+ne.message);
-      se('🌐 Network error: '+ne.message+'\n\nTry: Switch WiFi↔Mobile data, or use Chrome Incognito.');
-      btn.disabled=false;btn.textContent='✓ Save & Start Chatting';ss('');return;
+  se('');so('');ss('Sending test message to your Worker…');
+
+  try{
+    var res=await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:mdl,max_tokens:20,messages:[{role:'user',content:'Reply with just: CONNECTED'}]})
+    });
+    var data=await res.json();
+    ss('');
+    if(data.error){
+      se('Worker responded but got API error:\n'+data.error.message+'\n\nCheck your ANTHROPIC_API_KEY in Worker Settings → Variables.');
+    } else {
+      var reply=data.content&&data.content[0]&&data.content[0].text||'';
+      so('✅ Connected! AI replied: "'+reply.trim()+'"');
+      document.getElementById('sbtn').style.display='block';
+      WURL=url;MODEL=mdl;
     }
+  }catch(e){
+    ss('');
+    se('❌ Could not reach your Worker.\n\nError: '+e.message+'\n\nCheck:\n• Worker URL is correct (copy from Cloudflare dashboard)\n• Worker is deployed and active\n• Worker code was saved properly');
   }
-  se('⚠️ Could not access any model.\n\nThe debug panel shows the exact API responses.\nWait 10 mins after adding billing then retry.\nOr create a brand new API key at console.anthropic.com.');
-  btn.disabled=false;btn.textContent='✓ Save & Start Chatting';ss('');
+  btn.disabled=false;btn.textContent='▶ Test Connection';
+}
+
+function doSave(){
+  localStorage.setItem('_wurl',WURL);
+  localStorage.setItem('_model',MODEL);
+  showChat();
 }
 
 function showChat(){
   document.getElementById('setup').style.display='none';
   document.getElementById('chat').style.display='flex';
-  document.getElementById('mbadge').textContent=MODEL;
+  document.getElementById('mbadge').textContent=MODEL.split('-').slice(1,4).join('-');
   doNew();
 }
 
 function doReset(){
-  if(!confirm('Change API key and clear chat?'))return;
-  localStorage.removeItem('_k');localStorage.removeItem('_m');
-  KEY='';MODEL='';HIST=[];
+  if(!confirm('Go back to settings?'))return;
   document.getElementById('chat').style.display='none';
   document.getElementById('setup').style.display='flex';
+  document.getElementById('wurl').value=WURL;
+  document.getElementById('em').style.display='none';
+  document.getElementById('ok').style.display='none';
+  document.getElementById('sbtn').style.display='none';
 }
 
 function doNew(){
   HIST=[];
-  var inner=document.getElementById('inner');
-  inner.innerHTML='';
+  var inner=document.getElementById('inner');inner.innerHTML='';
   var w=document.createElement('div');w.className='welcome';
-  w.innerHTML='<div class="wi">✦</div><div><div class="wt">Your Personal AI</div><div class="ws">Senior developer + product strategist. Build apps, solve problems, ship ideas.</div></div><div class="chips" id="chiprow"></div>';
+  w.innerHTML='<div class="wi">✦</div><div><div class="wt">Your Personal AI</div><div class="ws">Senior developer + product strategist in your pocket. Build apps, solve problems, ship ideas.</div></div><div class="chips" id="cr"></div>';
   inner.appendChild(w);
-  var cr=document.getElementById('chiprow');
+  var cr=document.getElementById('cr');
   CHIPS.forEach(function(c){var b=document.createElement('button');b.className='chip';b.textContent=c;b.onclick=function(){go(c);};cr.appendChild(b);});
   document.getElementById('ctitle').textContent='My AI Assistant';
 }
@@ -226,7 +235,7 @@ function rmk(text){
   text=text.replace(/```(\w*)\n?([\s\S]*?)```/g,function(_,lang,code){
     var id='c'+Math.random().toString(36).slice(2,7);
     var esc=code.trim().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    return '<div class="cb"><div class="ch"><span class="cl">'+(lang||'code')+'</span><button class="cpb" onclick="navigator.clipboard.writeText(document.getElementById(\''+id+'\').textContent)">Copy</button></div><pre class="cp"><code id="'+id+'">'+esc+'</code></pre></div>';
+    return '<div class="cb"><div class="ch"><span class="cl">'+(lang||'code')+'</span><button class="cpb" onclick="navigator.clipboard.writeText(document.getElementById(\''+id+'\').textContent)">Copy</button></div><pre class="cpr"><code id="'+id+'">'+esc+'</code></pre></div>';
   });
   text=text.replace(/^### (.+)$/gm,'<h3>$1</h3>');
   text=text.replace(/^## (.+)$/gm,'<h2>$1</h2>');
@@ -236,8 +245,7 @@ function rmk(text){
   text=text.replace(/`([^`]+)`/g,'<code>$1</code>');
   text=text.replace(/^[-*] (.+)$/gm,'<li>$1</li>');
   text=text.replace(/^(\d+)\. (.+)$/gm,'<li>$2</li>');
-  text=text.replace(/\n\n/g,'<br/><br/>').replace(/\n/g,'<br/>');
-  return text;
+  return text.replace(/\n\n/g,'<br/><br/>').replace(/\n/g,'<br/>');
 }
 
 function addMsg(role,content){
@@ -246,12 +254,11 @@ function addMsg(role,content){
   var row=document.createElement('div');row.className='mrow'+(role==='user'?' u':'');
   if(role==='user'){
     row.innerHTML='<div class="bw uw"><div class="ububble">'+content.replace(/</g,'&lt;')+'</div></div>';
-  } else {
+  }else{
     row.innerHTML='<div class="av">✦</div><div class="bw"><div class="lbl">Assistant <span class="dot" id="ddot"></span></div><div class="aic" id="aist"></div></div>';
   }
   inner.appendChild(row);
   row.scrollIntoView({behavior:'smooth',block:'end'});
-  return row;
 }
 
 async function go(text){
@@ -267,8 +274,9 @@ async function go(text){
   addMsg('assistant','');
   var aist=document.getElementById('aist');
   try{
-    var res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:H(KEY),
+    var res=await fetch(WURL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:MODEL,max_tokens:3000,system:SYSTEM,messages:HIST})
     });
     var data=await res.json();
@@ -279,16 +287,11 @@ async function go(text){
     var tick=setInterval(function(){
       i+=8;aist.innerHTML=rmk(reply.slice(0,i));
       aist.scrollIntoView({behavior:'smooth',block:'end'});
-      if(i>=reply.length){
-        clearInterval(tick);
-        var d=document.getElementById('ddot');if(d)d.remove();
-        BUSY=false;sb.textContent='↑';us();
-      }
+      if(i>=reply.length){clearInterval(tick);var d=document.getElementById('ddot');if(d)d.remove();BUSY=false;sb.textContent='↑';us();}
     },10);
   }catch(e){
-    aist.innerHTML='<span style="color:#ef4444">⚠️ '+e.message+'</span>';
-    var d=document.getElementById('ddot');if(d)d.remove();
-    BUSY=false;sb.textContent='↑';us();
+    aist.innerHTML='<span style="color:#ef4444">⚠️ '+e.message+'<br/><br/>Check your Worker is running at:<br/><code style="font-size:12px">'+WURL+'</code></span>';
+    var d=document.getElementById('ddot');if(d)d.remove();BUSY=false;sb.textContent='↑';us();
   }
 }
 </script>
