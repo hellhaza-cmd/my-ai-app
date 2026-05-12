@@ -15,39 +15,35 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f4f0;height:100dv
 @keyframes slideup{from{transform:translateY(100%)}to{transform:translateY(0)}}
 #setup{display:flex;align-items:center;justify-content:center;min-height:100dvh;background:linear-gradient(145deg,#fdf6f0,#f0e8df);padding:20px}
 .sc{background:#fff;border-radius:22px;border:1px solid #e8e3dc;padding:28px 22px;max-width:440px;width:100%;box-shadow:0 12px 48px rgba(0,0,0,.1)}
-.sl{display:flex;align-items:center;gap:12px;margin-bottom:22px}
-.si{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#c96442,#7c3f2b);display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;flex-shrink:0}
 .slb{display:block;font-size:10.5px;font-weight:700;color:#9a948c;margin:11px 0 4px;text-transform:uppercase;letter-spacing:.06em}
 .inp{width:100%;padding:10px 12px;border:1.5px solid #e8e3dc;border-radius:10px;font-size:13px;font-family:inherit;color:#1c1917;background:#fafaf9;outline:none;transition:border-color .2s}
 .inp:focus{border-color:#c96442}
-.msg{border-radius:9px;padding:9px 12px;font-size:12.5px;margin:7px 0;line-height:1.6;display:none}
-.msg.e{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
-.msg.s{background:#f0fdf4;border:1px solid #86efac;color:#166534}
-.msg.i{background:#eff6ff;border:1px solid #93c5fd;color:#1e40af}
-.btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:7px;transition:all .2s}
-.btn-d{background:#1c1917;color:#fff}.btn-d:disabled{background:#e0dbd4;color:#a8a29e;cursor:not-allowed}
-.btn-g{background:#15803d;color:#fff;display:none}
+.emsg{border-radius:9px;padding:9px 12px;font-size:12.5px;margin:7px 0;line-height:1.6;display:none}
+.emsg.e{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+.emsg.s{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+.emsg.i{background:#eff6ff;border:1px solid #93c5fd;color:#1e40af}
+.xbtn{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:7px;transition:all .2s}
 #modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;padding:20px}
 #modal.open{display:flex}
 .mc{background:#fff;border-radius:18px;padding:22px;max-width:360px;width:100%;box-shadow:0 16px 60px rgba(0,0,0,.2)}
-#chat{display:none;flex-direction:column;height:100dvh;position:relative}
-#hdr{display:flex;align-items:center;gap:7px;padding:10px 13px;background:#fff;border-bottom:1px solid #ede8e0;flex-shrink:0;z-index:10}
+#chat{display:none;flex-direction:column;height:100dvh}
+#hdr{display:flex;align-items:center;gap:7px;padding:10px 13px;background:#fff;border-bottom:1px solid #ede8e0;flex-shrink:0}
 #ctitle{font-size:13px;font-weight:600;color:#1c1917;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 #mbadge{font-size:9px;background:#f0ede8;color:#9a3412;padding:2px 7px;border-radius:7px;font-weight:700;font-family:monospace;white-space:nowrap;flex-shrink:0}
-.hb{background:none;border:1px solid #e8e3dc;border-radius:7px;padding:5px 8px;cursor:pointer;font-size:12px;color:#78716c;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.hb{background:none;border:1px solid #e8e3dc;border-radius:7px;padding:5px 8px;cursor:pointer;font-size:12px;color:#78716c;flex-shrink:0;transition:all .15s}
 .hb:hover{background:#f5f0eb}
 #body{display:flex;flex:1;overflow:hidden;position:relative}
-#sdb{width:220px;min-width:220px;background:#fafaf8;border-right:1px solid #ede8e0;display:flex;flex-direction:column;overflow:hidden;transition:all .25s cubic-bezier(.4,0,.2,1);flex-shrink:0}
-#sdb.closed{width:0;min-width:0}
-@media(max-width:640px){#sdb{position:absolute;left:0;top:0;bottom:0;z-index:50;box-shadow:4px 0 20px rgba(0,0,0,.12)}#sdb.closed{transform:translateX(-100%);width:220px;min-width:220px}}
+#sb{width:220px;min-width:220px;background:#fafaf8;border-right:1px solid #ede8e0;display:flex;flex-direction:column;transition:all .25s;flex-shrink:0}
+#sb.closed{width:0;min-width:0;overflow:hidden}
+@media(max-width:640px){#sb{position:absolute;left:0;top:0;bottom:0;z-index:50;box-shadow:4px 0 20px rgba(0,0,0,.12)}#sb.closed{transform:translateX(-100%);width:220px;min-width:220px}}
 .sbh{padding:9px;border-bottom:1px solid #ede8e0;flex-shrink:0}
 .nbtn{display:flex;align-items:center;gap:7px;width:100%;background:#fff;border:1px solid #e8e3dc;border-radius:8px;padding:8px 10px;cursor:pointer;font-size:12px;color:#44403c;font-family:inherit;font-weight:500;transition:all .15s}
 .nbtn:hover{background:#f5f0eb}
 .hl{flex:1;overflow-y:auto;padding:6px}
 .hi{display:flex;align-items:center;gap:3px;margin-bottom:1px}
 .hlb{flex:1;padding:7px 9px;border-radius:7px;cursor:pointer;font-size:11.5px;color:#57534e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid transparent;transition:all .12s}
-.hlb:hover{background:#f0ebe4}.hlb.active{background:#f0ebe4;border-color:#ddd5c8;color:#1c1917;font-weight:500}
-.hd{background:none;border:none;color:#ccc;cursor:pointer;font-size:14px;padding:3px 5px;border-radius:4px;transition:color .15s;flex-shrink:0}
+.hlb:hover{background:#f0ebe4}.hlb.act{background:#f0ebe4;border-color:#ddd5c8;color:#1c1917;font-weight:500}
+.hd{background:none;border:none;color:#ccc;cursor:pointer;font-size:14px;padding:3px 5px;border-radius:4px;flex-shrink:0}
 .hd:hover{color:#ef4444}
 .sbf{padding:8px 9px;border-top:1px solid #ede8e0;flex-shrink:0}
 .ssp{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 10px;font-size:11px;color:#1e40af;line-height:1.7}
@@ -55,12 +51,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f4f0;height:100dv
 #msgs{flex:1;overflow-y:auto;padding:20px 0}
 #inner{max-width:720px;margin:0 auto;padding:0 15px}
 .wlc{display:flex;flex-direction:column;align-items:center;gap:18px;padding:28px 10px;min-height:55vh}
-.wi{width:50px;height:50px;border-radius:13px;background:linear-gradient(135deg,#c96442,#7c3f2b);display:flex;align-items:center;justify-content:center;font-size:21px;color:#fff}
-.wt{font-size:20px;font-weight:800;color:#1c1917;letter-spacing:-.03em;text-align:center}
-.ws{font-size:13px;color:#78716c;max-width:260px;line-height:1.7;text-align:center}
-.cg{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:430px;width:100%}
-.cp{background:#fff;border:1px solid #e8e3dc;border-radius:10px;padding:10px 12px;cursor:pointer;font-size:11px;color:#44403c;font-family:inherit;text-align:left;line-height:1.5;transition:all .15s}
-.cp:hover{background:#f5f0eb}
+.wi{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#c96442,#7c3f2b);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;box-shadow:0 4px 16px rgba(201,100,66,.25)}
+.wt{font-size:21px;font-weight:800;color:#1c1917;letter-spacing:-.03em;text-align:center}
+.ws{font-size:13px;color:#78716c;max-width:270px;line-height:1.7;text-align:center}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:7px;max-width:440px;width:100%}
+.cp{background:#fff;border:1px solid #e8e3dc;border-radius:10px;padding:10px 12px;cursor:pointer;font-size:11px;color:#44403c;font-family:inherit;text-align:left;line-height:1.5;transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.cp:hover{background:#f5f0eb;border-color:#d4cfc9}
 .mr{display:flex;gap:10px;margin-bottom:18px;animation:fadein .25s ease}
 .mr.u{flex-direction:row-reverse}
 .av{width:27px;height:27px;border-radius:7px;background:linear-gradient(135deg,#c96442,#7c3f2b);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0;margin-top:2px}
@@ -76,9 +72,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f4f0;height:100dv
 .apcn{font-size:12.5px;font-weight:700;color:#1c1917}
 .apcl{font-size:10.5px;color:#a8a29e;margin-top:1px}
 .apcb{display:flex;gap:7px;padding:11px 15px}
-.apbp{flex:1;padding:9px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;background:linear-gradient(135deg,#c96442,#9d3b20);color:#fff;border:none;transition:opacity .2s}
+.apbp{flex:1;padding:9px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;background:linear-gradient(135deg,#c96442,#9d3b20);color:#fff;border:none}
 .apbp:hover{opacity:.88}
-.apbc{flex:1;padding:9px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;background:#f5f0eb;color:#57534e;border:1.5px solid #e0d9d0;transition:all .2s}
+.apbc{flex:1;padding:9px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;background:#f5f0eb;color:#57534e;border:1.5px solid #e0d9d0}
 .apbc:hover{background:#ede8e0}
 #pv{display:none;position:fixed;z-index:100;background:#fff;flex-direction:column}
 #pv.open{display:flex}
@@ -86,13 +82,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f4f0;height:100dv
 @media(max-width:768px){#pv{top:0;left:0;right:0;bottom:0;animation:slideup .3s ease}}
 #pvh{display:flex;align-items:center;gap:7px;padding:9px 13px;background:#fff;border-bottom:1px solid #ede8e0;flex-shrink:0}
 #pvt{font-size:12.5px;font-weight:600;color:#1c1917;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ptb{background:none;border:1px solid #e8e3dc;border-radius:6px;padding:5px 9px;cursor:pointer;font-size:11px;font-weight:600;color:#78716c;transition:all .15s;white-space:nowrap}
+.ptb{background:none;border:1px solid #e8e3dc;border-radius:6px;padding:5px 9px;cursor:pointer;font-size:11px;font-weight:600;color:#78716c;transition:all .15s}
 .ptb.act{background:#1c1917;color:#fff;border-color:#1c1917}
-.pcb{background:#f0ede8;border:1px solid #ddd5c8;border-radius:6px;padding:5px 9px;cursor:pointer;font-size:11px;font-weight:600;color:#57534e;white-space:nowrap}
-.pxb{background:none;border:none;font-size:20px;cursor:pointer;color:#a8a29e;padding:0 2px;line-height:1;flex-shrink:0}
+.pcpb{background:#f0ede8;border:1px solid #ddd5c8;border-radius:6px;padding:5px 9px;cursor:pointer;font-size:11px;font-weight:600;color:#57534e;transition:all .15s}
+.pcpb:hover{background:#ede8e0}
+.pxb{background:none;border:none;font-size:20px;cursor:pointer;color:#a8a29e;padding:0 2px;line-height:1}
 .pxb:hover{color:#1c1917}
-#pf{flex:1;border:none;background:#fff;display:block}
-#cv{flex:1;margin:0;padding:16px;overflow:auto;background:#0f1117;color:#cdd6f4;font-family:Menlo,monospace;font-size:12px;line-height:1.75;white-space:pre-wrap;word-break:break-all;display:none}
+#pframe{flex:1;border:none;background:#fff;display:block}
+#cview{flex:1;margin:0;padding:16px;overflow:auto;background:#0f1117;color:#cdd6f4;font-family:Menlo,monospace;font-size:12px;line-height:1.75;white-space:pre-wrap;word-break:break-all;display:none}
 #ia{padding:10px 13px 14px;flex-shrink:0;max-width:720px;width:100%;margin:0 auto}
 .ibw{display:flex;gap:7px;background:#fff;border:1.5px solid #e8e3dc;border-radius:14px;padding:9px 10px;box-shadow:0 2px 8px rgba(0,0,0,.06);align-items:flex-end;transition:border-color .2s}
 .ibw:focus-within{border-color:#c9b8a0}
@@ -103,71 +100,34 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f4f0;height:100dv
 .fn{text-align:center;font-size:10px;color:#c0bab4;margin-top:5px}
 .sp{width:14px;height:14px;border:2px solid #a8a29e;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
 </style>
-
-<!-- System prompt stored safely in HTML — no JS string escaping issues -->
-<textarea id="SP" style="display:none">You are a brilliant senior full-stack developer and product designer acting as a personal AI assistant for an entrepreneur with minimal coding experience.
-
-COMMUNICATION: Always plain English. Never show raw code in your explanation text.
-
-WHEN BUILDING ANY APP, GAME, TOOL OR WEBPAGE — ALWAYS DO ALL THREE:
-1. Write 2-3 plain English sentences BEFORE the code describing what you built.
-2. Output ONE complete self-contained HTML file inside a fenced html code block.
-3. Write 1-2 plain English "how to use it" sentences AFTER the code.
-
-HTML FILE RULES — ALL MANDATORY:
-- ALL CSS inside a style element, ALL JS inside a script element — one single file
-- ALWAYS load Tailwind CSS: add script tag for https://cdn.tailwindcss.com
-- Load Chart.js or other CDN libraries as needed
-- ZERO placeholders, ZERO TODOs, ZERO "add API key here" — 100% functional immediately
-- For weather or data apps: use hardcoded realistic sample data so it works without any API
-- NEVER truncate — output the entire complete file every time
-- Use all available tokens to deliver a complete polished app
-
-DESIGN — NON-NEGOTIABLE — MUST LOOK LIKE A PREMIUM APP STORE APP:
-- Tailwind CSS utility classes throughout
-- Beautiful gradient hero header e.g. bg-gradient-to-br from-indigo-600 to-violet-700 text-white p-8
-- Card layouts: bg-white rounded-2xl shadow-lg p-6
-- Rich cohesive colour palette — one strong primary colour used consistently
-- Smooth transitions on every interactive element: transition-all duration-200
-- Hover states on ALL buttons and clickable elements
-- Bold typography hierarchy: text-3xl font-bold for headings, text-sm text-gray-500 for labels
-- Generous spacing: gap-4 gap-6, p-6 p-8 padding
-- Mobile-first responsive: sm: md: lg: prefixes throughout
-- CSS animations for key moments: progress rings, counters, reveals, streaks
-- Beautiful empty states, loading spinners, status badges
-- For fitness apps: deep indigo or violet with emerald accents
-- For finance apps: deep blue or slate with green accents
-- For productivity: amber or orange with purple accents
-- Quality bar: Headspace, Strava, Monzo, Notion — that level of polish</textarea>
-
 </head>
 <body>
 
 <div id="setup">
   <div class="sc">
-    <div class="sl">
-      <div class="si">&#10022;</div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#c96442,#7c3f2b);display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;flex-shrink:0">&#10022;</div>
       <div>
         <div style="font-size:18px;font-weight:800;color:#1c1917;letter-spacing:-.03em">My AI Assistant</div>
         <div style="font-size:11px;color:#a8a29e;margin-top:1px">Personal senior developer AI</div>
       </div>
     </div>
     <div style="font-size:13px;font-weight:700;color:#1c1917;margin-bottom:3px">One-time setup</div>
-    <div style="font-size:12px;color:#78716c;line-height:1.6">Your API key is in Cloudflare — never in this file.</div>
+    <div style="font-size:12px;color:#78716c;line-height:1.6;margin-bottom:2px">Your API key is in Cloudflare only &mdash; never in this file.</div>
     <span class="slb">Cloudflare Worker URL</span>
-    <input class="inp" type="text" id="wurl" placeholder="https://my-ai-app.htwoodward.workers.dev"
-      oninput="onIn()" onpaste="setTimeout(onIn,20)" onchange="onIn()"/>
+    <input class="inp" type="url" id="wurl" placeholder="https://my-ai-app.htwoodward.workers.dev"
+      oninput="chk()" onpaste="setTimeout(chk,10)" onchange="chk()" onkeyup="chk()"/>
     <span class="slb">Model</span>
     <select class="inp" id="mdl">
-      <option value="claude-sonnet-4-6">Claude Sonnet 4 — best quality</option>
-      <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 — fast and cheap</option>
-      <option value="claude-opus-4-6">Claude Opus 4 — most powerful</option>
+      <option value="claude-sonnet-4-6">Claude Sonnet 4 &mdash; best quality</option>
+      <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 &mdash; fast and cheap</option>
+      <option value="claude-opus-4-6">Claude Opus 4 &mdash; most powerful</option>
     </select>
-    <div class="msg e" id="em"></div>
-    <div class="msg s" id="ok"></div>
-    <div class="msg i" id="sm"></div>
-    <button class="btn btn-d" id="tbtn" onclick="doTest()" disabled>Test Connection</button>
-    <button class="btn btn-g" id="svbtn" onclick="doSave()">Save and Start</button>
+    <div class="emsg e" id="em"></div>
+    <div class="emsg s" id="ok"></div>
+    <div class="emsg i" id="sm"></div>
+    <button class="xbtn" id="tbtn" onclick="doTest()" disabled style="background:#e0dbd4;color:#a8a29e;cursor:not-allowed">Test Connection</button>
+    <button class="xbtn" id="svbtn" onclick="doSave()" style="display:none;background:#15803d;color:#fff">Save and Start Chatting</button>
   </div>
 </div>
 
@@ -175,7 +135,7 @@ DESIGN — NON-NEGOTIABLE — MUST LOOK LIKE A PREMIUM APP STORE APP:
   <div class="mc">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span style="font-size:15px;font-weight:700;color:#1c1917">Settings</span>
-      <button onclick="closeModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#a8a29e;line-height:1">x</button>
+      <button onclick="closeModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#a8a29e;line-height:1">&#215;</button>
     </div>
     <div style="background:#f5f0eb;border-radius:9px;padding:11px;margin-bottom:11px;font-size:12px;color:#57534e;line-height:1.7">
       <strong>Worker:</strong> <span id="murl" style="font-family:monospace;font-size:11px;word-break:break-all"></span><br/>
@@ -183,26 +143,26 @@ DESIGN — NON-NEGOTIABLE — MUST LOOK LIKE A PREMIUM APP STORE APP:
     </div>
     <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:11px;margin-bottom:12px">
       <div style="font-size:12px;font-weight:700;color:#1e40af;margin-bottom:3px">Cross-device Sync Code</div>
-      <div id="msync" onclick="copySyncCode()" style="font-family:monospace;font-size:12px;background:#dbeafe;color:#1e40af;padding:7px 9px;border-radius:7px;cursor:pointer;word-break:break-all;margin-top:6px">loading</div>
+      <div id="msync" onclick="copySC()" style="font-family:monospace;font-size:12px;background:#dbeafe;color:#1e40af;padding:7px 9px;border-radius:7px;cursor:pointer;word-break:break-all;margin-top:6px">loading</div>
       <div style="font-size:10px;color:#93c5fd;margin-top:3px">Tap to copy</div>
     </div>
-    <span class="slb">Sync code from another device:</span>
+    <span class="slb">Sync code from another device</span>
     <input class="inp" type="text" id="syncin" placeholder="Paste sync code here" style="margin-bottom:9px"/>
-    <button onclick="applySyncCode()" style="width:100%;padding:9px;background:#1e40af;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:7px">Apply Sync Code</button>
-    <button onclick="doReset()" style="width:100%;padding:9px;background:#fef2f2;border:1px solid #fca5a5;border-radius:9px;color:#dc2626;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Change Worker or Model</button>
+    <button onclick="applySync()" style="width:100%;padding:9px;background:#1e40af;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:7px">Apply Sync Code</button>
+    <button onclick="doReset()" style="width:100%;padding:9px;background:#fef2f2;border:1px solid #fca5a5;border-radius:9px;color:#dc2626;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Change Worker / Model</button>
   </div>
 </div>
 
 <div id="pv">
   <div id="pvh">
     <span id="pvt">App Preview</span>
-    <button class="ptb act" id="tp" onclick="showTab('p')">Preview</button>
-    <button class="ptb" id="tc" onclick="showTab('c')">Code</button>
-    <button class="pcb" id="cpb" onclick="copyCode()">Copy</button>
-    <button class="pxb" onclick="closePv()">x</button>
+    <button class="ptb act" id="tpv" onclick="showTab('p')">Preview</button>
+    <button class="ptb" id="tco" onclick="showTab('c')">Code</button>
+    <button class="pcpb" id="cpb" onclick="copyCode()">Copy</button>
+    <button class="pxb" onclick="closePv()">&#215;</button>
   </div>
-  <iframe id="pf" sandbox="allow-scripts allow-modals allow-forms allow-popups" title="Preview"></iframe>
-  <pre id="cv"></pre>
+  <iframe id="pframe" sandbox="allow-scripts allow-modals allow-forms allow-popups" title="Preview"></iframe>
+  <pre id="cview"></pre>
 </div>
 
 <div id="chat">
@@ -214,14 +174,14 @@ DESIGN — NON-NEGOTIABLE — MUST LOOK LIKE A PREMIUM APP STORE APP:
     <button class="hb" onclick="startNew()">New</button>
   </div>
   <div id="body">
-    <div id="sdb">
+    <div id="sb">
       <div class="sbh"><button class="nbtn" onclick="startNew()">New conversation</button></div>
       <div class="hl" id="hl"></div>
       <div class="sbf">
         <div class="ssp">
           <strong>Sync code</strong><br/>
-          <span class="ssc" id="sbsync" onclick="copySyncCode()">loading</span><br/>
-          <span style="font-size:10px;opacity:.75">Tap to copy and use on other devices</span>
+          <span class="ssc" id="sbsc" onclick="copySC()">loading</span><br/>
+          <span style="font-size:10px;opacity:.75">Tap to copy</span>
         </div>
       </div>
     </div>
@@ -232,467 +192,262 @@ DESIGN — NON-NEGOTIABLE — MUST LOOK LIKE A PREMIUM APP STORE APP:
           <textarea id="mi" rows="1" placeholder="Describe an app to build, or ask anything"
             oninput="ar(this);us()"
             onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();go();}"></textarea>
-          <button id="sb2" onclick="go()">up</button>
+          <button id="sb2" onclick="go()">&#8593;</button>
         </div>
-        <div class="fn">Powered by Claude. Apps open in a live preview panel.</div>
+        <div class="fn">Powered by Claude &middot; Apps open in a live preview panel</div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-var WURL='', MODEL='claude-sonnet-4-6', HIST=[], BUSY=false, CID='', CHATS={}, UID='';
-var CODE='', LANG='html';
+var WURL='',MODEL='claude-sonnet-4-6',HIST=[],BUSY=false,CID='',CHATS={},UID='';
+var CODE='',CLANG='html';
 
-// Read system prompt from the hidden textarea — no JS string escaping issues
-function getSYSTEM() {
-  return document.getElementById('SP').value;
-}
+var SYSTEM='You are a brilliant senior full-stack developer and product designer acting as a personal AI assistant for an entrepreneur with minimal coding experience.\n\nCOMMUNICATION: Always plain English. Never show raw code in your explanation.\n\nWHEN BUILDING ANY APP OR WEBPAGE — DO ALL OF THIS IN ORDER:\n1. Write 2-3 plain English sentences BEFORE the code describing what you built.\n2. Output ONE complete self-contained HTML file wrapped in a fenced code block with the language tag \'html\'.\n3. Write 1-2 plain English sentences AFTER the code on how to use it.\n\nHTML FILE — ALL MANDATORY:\n- ALL CSS in a style tag, ALL JavaScript in a script tag, in ONE file.\n- ALWAYS load Tailwind CSS from cdn.tailwindcss.com via script tag.\n- Load Chart.js or other libs from cdnjs as needed.\n- ZERO placeholders, ZERO TODOs, 100% functional and complete.\n- For weather or data apps: use realistic hardcoded sample data — no API keys.\n- NEVER truncate the code. Output the entire file every time.\n\nDESIGN — NON-NEGOTIABLE — MUST LOOK LIKE A PREMIUM APP:\n- Use Tailwind CSS utility classes throughout.\n- Gradient hero header: bg-gradient-to-br from-indigo-600 to-violet-700 text-white p-8.\n- Card layouts: bg-white rounded-2xl shadow-lg p-6.\n- Strong cohesive primary colour used consistently throughout.\n- Smooth transitions on every interactive element: transition-all duration-200.\n- Hover states on ALL buttons and clickable items.\n- Bold typography hierarchy: text-3xl font-bold headings, text-gray-500 text-sm labels.\n- Generous spacing: gap-4 gap-6, p-6 p-8.\n- Mobile-first responsive with sm: md: lg: prefixes.\n- Animated elements with CSS keyframes for counters, progress bars, reveals.\n- For fitness apps: deep indigo and violet with emerald accents.\n- For finance apps: deep blue and slate with green accents.\n- For productivity: amber and orange with purple accents.\n- Quality target: Headspace, Strava, Monzo — that level of premium finish.';
 
-var CHIPS = [
+var CHIPS=[
   'Build a premium dark fitness tracker with workout cards, progress rings and streaks',
-  'Build a beautiful weather dashboard with glassmorphism cards and 5-day forecast',
+  'Build a beautiful weather dashboard with glassmorphism cards and a 5-day forecast',
   'Build a budget tracker with colourful spending charts, categories and savings goals',
   'Build a habit tracker with heatmap calendar, streaks and achievement badges',
   'Build a polished neon snake game with high scores and smooth animations',
-  'Build a notes app with markdown support, tags, search and sidebar layout'
+  'Build a notes app with markdown support, tags, search and a clean sidebar layout'
 ];
 
-window.onload = function() {
-  UID = localStorage.getItem('_uid') || '';
-  if (!UID) {
-    UID = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36));
-    localStorage.setItem('_uid', UID);
-  }
-  WURL = localStorage.getItem('_wurl') || '';
-  MODEL = localStorage.getItem('_model') || 'claude-sonnet-4-6';
-  if (WURL) {
-    showChat();
-    loadHistory();
-  } else {
-    setTimeout(onIn, 200);
-  }
+window.onload=function(){
+  UID=localStorage.getItem('_uid')||'';
+  if(!UID){UID=crypto.randomUUID?crypto.randomUUID():(Math.random().toString(36).slice(2)+Date.now().toString(36));localStorage.setItem('_uid',UID);}
+  WURL=localStorage.getItem('_wurl')||'';
+  MODEL=localStorage.getItem('_model')||'claude-sonnet-4-6';
+  if(WURL){showChat();loadHistory();return;}
+  setTimeout(chk,200);
 };
 
-function onIn() {
-  var v = document.getElementById('wurl').value.trim();
-  var ok = v.length > 8 && (v.startsWith('https://') || v.startsWith('http://'));
-  document.getElementById('tbtn').disabled = !ok;
-  document.getElementById('em').style.display = 'none';
-  document.getElementById('ok').style.display = 'none';
-  document.getElementById('svbtn').style.display = 'none';
+function chk(){
+  var v=(document.getElementById('wurl').value||'').trim();
+  var ok=v.length>10&&v.startsWith('https://');
+  var btn=document.getElementById('tbtn');
+  btn.disabled=!ok;
+  btn.style.background=ok?'#1c1917':'#e0dbd4';
+  btn.style.color=ok?'#fff':'#a8a29e';
+  btn.style.cursor=ok?'pointer':'not-allowed';
 }
 
-function showMsg(id, m) {
-  var el = document.getElementById(id);
-  el.textContent = m;
-  el.style.display = m ? 'block' : 'none';
-}
+function sm(id,m){var e=document.getElementById(id);e.textContent=m;e.style.display=m?'block':'none';}
 
-async function doTest() {
-  var url = document.getElementById('wurl').value.trim().replace(/\/$/, '');
-  var mdl = document.getElementById('mdl').value;
-  var btn = document.getElementById('tbtn');
-  btn.disabled = true;
-  btn.textContent = 'Testing...';
-  showMsg('em', '');
-  showMsg('ok', '');
-  showMsg('sm', 'Connecting to Worker...');
-  try {
-    var res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: mdl, max_tokens: 20, messages: [{ role: 'user', content: 'Reply: CONNECTED' }] })
-    });
-    var raw = await res.text();
-    showMsg('sm', '');
-    if (!raw.trim()) {
-      showMsg('em', 'Empty response. Check ANTHROPIC_API_KEY is saved in Cloudflare Settings.');
-      btn.disabled = false; btn.textContent = 'Test Connection'; return;
+async function doTest(){
+  var url=(document.getElementById('wurl').value||'').trim().replace(/\/$/,'');
+  var mdl=document.getElementById('mdl').value;
+  var btn=document.getElementById('tbtn');
+  btn.disabled=true;btn.textContent='Testing';
+  sm('em','');sm('ok','');sm('sm','Connecting to Worker');
+  try{
+    var res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:mdl,max_tokens:20,messages:[{role:'user',content:'Say CONNECTED'}]})});
+    var raw=await res.text();sm('sm','');
+    if(!raw.trim()){sm('em','Empty response. Check ANTHROPIC_API_KEY in Cloudflare Settings.');chk();btn.textContent='Test Connection';return;}
+    var d;try{d=JSON.parse(raw);}catch(ex){sm('em','Bad response: '+raw.slice(0,100));chk();btn.textContent='Test Connection';return;}
+    if(d.error){
+      if(d.error.type==='not_found_error')sm('em','Model not found. Try a different model.');
+      else if(d.error.type==='authentication_error')sm('em','Invalid API key in Worker. Re-enter in Cloudflare Settings.');
+      else sm('em',(d.error.type||'Error')+': '+(d.error.message||''));
+    }else{
+      sm('ok','Connected! Claude replied: "'+(d.content&&d.content[0]&&d.content[0].text||'').trim()+'"');
+      document.getElementById('svbtn').style.display='block';
+      WURL=url;MODEL=mdl;
     }
-    var d;
-    try { d = JSON.parse(raw); } catch (err) {
-      showMsg('em', 'Unexpected response: ' + raw.slice(0, 100));
-      btn.disabled = false; btn.textContent = 'Test Connection'; return;
-    }
-    if (d.error) {
-      if (d.error.type === 'not_found_error') showMsg('em', 'Model not found. Try a different model.');
-      else if (d.error.type === 'authentication_error') showMsg('em', 'Invalid API key. Re-enter in Cloudflare Settings.');
-      else showMsg('em', (d.error.type || 'Error') + ': ' + (d.error.message || ''));
-    } else {
-      var reply = (d.content && d.content[0] && d.content[0].text) || '';
-      showMsg('ok', 'Connected! Claude replied: "' + reply.trim() + '"');
-      document.getElementById('svbtn').style.display = 'block';
-      WURL = url; MODEL = mdl;
-    }
-  } catch (err) {
-    showMsg('sm', '');
-    showMsg('em', 'Cannot reach Worker: ' + err.message);
-  }
-  btn.disabled = false;
-  btn.textContent = 'Test Connection';
+  }catch(ex){sm('sm','');sm('em','Cannot reach Worker: '+ex.message);}
+  chk();btn.textContent='Test Connection';
 }
 
-function doSave() {
-  WURL = document.getElementById('wurl').value.trim().replace(/\/$/, '');
-  MODEL = document.getElementById('mdl').value;
-  localStorage.setItem('_wurl', WURL);
-  localStorage.setItem('_model', MODEL);
-  showChat();
-  loadHistory();
+function doSave(){
+  WURL=(document.getElementById('wurl').value||'').trim().replace(/\/$/,'');
+  MODEL=document.getElementById('mdl').value;
+  localStorage.setItem('_wurl',WURL);localStorage.setItem('_model',MODEL);
+  showChat();loadHistory();
 }
 
-function showChat() {
-  document.getElementById('setup').style.display = 'none';
-  document.getElementById('chat').style.display = 'flex';
-  document.getElementById('mbadge').textContent = MODEL.replace('claude-', '').replace(/-\d{8}$/, '');
-  document.getElementById('sbsync').textContent = UID.slice(0, 8) + '...';
+function showChat(){
+  document.getElementById('setup').style.display='none';
+  document.getElementById('chat').style.display='flex';
+  document.getElementById('mbadge').textContent=MODEL.split('-').slice(1,4).join('-');
+  document.getElementById('sbsc').textContent=UID.slice(0,10)+'...';
   startNew();
 }
+function toggleSb(){document.getElementById('sb').classList.toggle('closed');}
+function openModal(){document.getElementById('murl').textContent=WURL;document.getElementById('mmdl').textContent=MODEL;document.getElementById('msync').textContent=UID;document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function doReset(){if(!confirm('Go back to setup?'))return;closeModal();localStorage.removeItem('_wurl');localStorage.removeItem('_model');document.getElementById('chat').style.display='none';document.getElementById('setup').style.display='flex';document.getElementById('wurl').value='';['em','ok','sm'].forEach(function(id){sm(id,'');});document.getElementById('svbtn').style.display='none';chk();}
+function copySC(){navigator.clipboard.writeText(UID).then(function(){var el=document.getElementById('msync');var p=el.textContent;el.textContent='Copied!';setTimeout(function(){el.textContent=p;},1500);}).catch(function(){});}
+function applySync(){var c=(document.getElementById('syncin').value||'').trim();if(!c){alert('Paste a sync code first');return;}if(!confirm('Switch to this sync code?'))return;UID=c;localStorage.setItem('_uid',UID);closeModal();document.getElementById('sbsc').textContent=UID.slice(0,10)+'...';loadHistory();}
 
-function toggleSb() { document.getElementById('sdb').classList.toggle('closed'); }
-
-function openModal() {
-  document.getElementById('murl').textContent = WURL;
-  document.getElementById('mmdl').textContent = MODEL;
-  document.getElementById('msync').textContent = UID;
-  document.getElementById('modal').classList.add('open');
+async function loadHistory(){
+  var local=localStorage.getItem('_chats');if(local){try{CHATS=JSON.parse(local);}catch(ex){CHATS={};}}renderHL();
+  try{var res=await fetch(WURL+'/chats?u='+encodeURIComponent(UID));if(res.ok){var arr=await res.json();if(Array.isArray(arr)&&arr.length){arr.forEach(function(c){if(c&&c.id)CHATS[c.id]=c;});localStorage.setItem('_chats',JSON.stringify(CHATS));renderHL();}}}catch(ex){}
 }
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-
-function doReset() {
-  if (!confirm('Go back to setup?')) return;
-  closeModal();
-  localStorage.removeItem('_wurl');
-  localStorage.removeItem('_model');
-  document.getElementById('chat').style.display = 'none';
-  document.getElementById('setup').style.display = 'flex';
-  document.getElementById('wurl').value = '';
-  document.getElementById('em').style.display = 'none';
-  document.getElementById('ok').style.display = 'none';
-  document.getElementById('sm').style.display = 'none';
-  document.getElementById('svbtn').style.display = 'none';
-  document.getElementById('tbtn').disabled = true;
-}
-
-function copySyncCode() {
-  navigator.clipboard.writeText(UID).then(function() {
-    var el = document.getElementById('msync');
-    var prev = el.textContent;
-    el.textContent = 'Copied!';
-    setTimeout(function() { el.textContent = prev; }, 1500);
-  }).catch(function() {});
-}
-
-function applySyncCode() {
-  var c = document.getElementById('syncin').value.trim();
-  if (!c) { alert('Paste a sync code first'); return; }
-  if (!confirm('Switch to this sync code? This loads chats from that device.')) return;
-  UID = c;
-  localStorage.setItem('_uid', UID);
-  closeModal();
-  document.getElementById('sbsync').textContent = UID.slice(0, 8) + '...';
-  loadHistory();
-}
-
-async function loadHistory() {
-  var local = localStorage.getItem('_chats');
-  if (local) { try { CHATS = JSON.parse(local); } catch (e) { CHATS = {}; } }
-  renderHL();
-  try {
-    var res = await fetch(WURL + '/chats?u=' + encodeURIComponent(UID));
-    if (res.ok) {
-      var arr = await res.json();
-      if (Array.isArray(arr) && arr.length) {
-        arr.forEach(function(c) { if (c && c.id) CHATS[c.id] = c; });
-        localStorage.setItem('_chats', JSON.stringify(CHATS));
-        renderHL();
-      }
-    }
-  } catch (e) {}
-}
-
-function renderHL() {
-  var list = document.getElementById('hl');
-  var arr = Object.values(CHATS).filter(Boolean).sort(function(a, b) { return b.ts - a.ts; });
-  if (!arr.length) {
-    list.innerHTML = '<p style="font-size:11px;color:#b0a89e;text-align:center;margin-top:20px;padding:0 8px">No chats yet</p>';
-    return;
-  }
-  list.innerHTML = '';
-  arr.forEach(function(c) {
-    var div = document.createElement('div');
-    div.className = 'hi';
-    var title = esc(c.title || 'Chat');
-    div.innerHTML = '<div class="hlb' + (CID === c.id ? ' active' : '') + '" onclick="loadChat(\'' + esc(c.id) + '\')" title="' + title + '">' + title.slice(0, 28) + '</div><button class="hd" onclick="delChat(\'' + esc(c.id) + '\')">x</button>';
-    list.appendChild(div);
+function renderHL(){
+  var list=document.getElementById('hl');
+  var arr=Object.values(CHATS).filter(Boolean).sort(function(a,b){return b.ts-a.ts;});
+  if(!arr.length){list.innerHTML='<p style="font-size:11px;color:#b0a89e;text-align:center;margin-top:20px;padding:0 8px">No chats yet</p>';return;}
+  list.innerHTML='';
+  arr.forEach(function(c){
+    var d=document.createElement('div');d.className='hi';
+    var t=xe(c.title||'Chat').slice(0,30);
+    d.innerHTML='<div class="hlb'+(CID===c.id?' act':'')+'" onclick="loadChat(''+xe(c.id)+'')" title="'+t+'">'+t+'</div><button class="hd" onclick="delChat(''+xe(c.id)+'')">x</button>';
+    list.appendChild(d);
   });
 }
-
-async function saveChat() {
-  if (!CID || !HIST.length) return;
-  var title = HIST[0] ? HIST[0].content.slice(0, 52) : 'New chat';
-  var chat = { id: CID, title: title, messages: HIST.map(function(m) { return { role: m.role, content: m.content }; }), ts: Date.now(), userId: UID };
-  CHATS[CID] = chat;
-  localStorage.setItem('_chats', JSON.stringify(CHATS));
-  renderHL();
-  try { await fetch(WURL + '/chats', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(chat) }); } catch (e) {}
+async function saveChat(){
+  if(!CID||!HIST.length)return;
+  var title=(HIST[0]?HIST[0].content:'Chat').slice(0,52);
+  var chat={id:CID,title:title,messages:HIST.map(function(m){return{role:m.role,content:m.content};}),ts:Date.now(),userId:UID};
+  CHATS[CID]=chat;localStorage.setItem('_chats',JSON.stringify(CHATS));renderHL();
+  try{await fetch(WURL+'/chats',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(chat)});}catch(ex){}
 }
-
-async function delChat(id) {
-  if (!confirm('Delete this chat?')) return;
-  delete CHATS[id];
-  localStorage.setItem('_chats', JSON.stringify(CHATS));
-  try { await fetch(WURL + '/chats/' + id + '?u=' + encodeURIComponent(UID), { method: 'DELETE' }); } catch (e) {}
-  if (CID === id) startNew(); else renderHL();
+async function delChat(id){
+  if(!confirm('Delete this chat?'))return;
+  delete CHATS[id];localStorage.setItem('_chats',JSON.stringify(CHATS));
+  try{await fetch(WURL+'/chats/'+id+'?u='+encodeURIComponent(UID),{method:'DELETE'});}catch(ex){}
+  if(CID===id)startNew();else renderHL();
 }
-
-function loadChat(id) {
-  var c = CHATS[id];
-  if (!c) return;
-  CID = id; HIST = c.messages || [];
-  document.getElementById('ctitle').textContent = c.title || 'Chat';
-  document.getElementById('inner').innerHTML = '';
-  HIST.forEach(function(m) { addMsg(m.role, m.content, false); });
-  renderHL();
-  document.getElementById('msgs').scrollTop = 99999;
-  closePv();
+function loadChat(id){
+  var c=CHATS[id];if(!c)return;
+  CID=id;HIST=c.messages||[];
+  document.getElementById('ctitle').textContent=c.title||'Chat';
+  document.getElementById('inner').innerHTML='';
+  HIST.forEach(function(m){addMsg(m.role,m.content,false);});
+  renderHL();document.getElementById('msgs').scrollTop=99999;closePv();
 }
-
-function startNew() {
-  CID = 'chat-' + Date.now(); HIST = [];
-  document.getElementById('ctitle').textContent = 'My AI Assistant';
-  document.getElementById('inner').innerHTML = '';
-  closePv();
-  var w = document.createElement('div');
-  w.className = 'wlc';
-  w.innerHTML = '<div class="wi">&#10022;</div><div><div class="wt">Your Personal AI</div><div class="ws">Describe any app and I will build it with a live preview. Or ask me anything.</div></div><div class="cg" id="cg"></div>';
+function startNew(){
+  CID='c'+Date.now();HIST=[];
+  document.getElementById('ctitle').textContent='My AI Assistant';
+  document.getElementById('inner').innerHTML='';closePv();
+  var w=document.createElement('div');w.className='wlc';
+  w.innerHTML='<div class="wi">&#10022;</div><div><div class="wt">Your Personal AI</div><div class="ws">Describe any app and I will build it with a live preview.</div></div><div class="cg" id="cg"></div>';
   document.getElementById('inner').appendChild(w);
-  CHIPS.forEach(function(c) {
-    var b = document.createElement('button');
-    b.className = 'cp'; b.textContent = c;
-    b.onclick = function() { go(c); };
-    document.getElementById('cg').appendChild(b);
-  });
+  CHIPS.forEach(function(c){var b=document.createElement('button');b.className='cp';b.textContent=c;b.onclick=function(){go(c);};document.getElementById('cg').appendChild(b);});
   renderHL();
 }
 
-function esc(t) {
-  return String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
+function xe(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-function safeMd(text) {
-  if (!text) return '';
-  var t = esc(text);
-  t = t.replace(/^### (.+)$/gm, '<h3 style="font-size:14px;font-weight:700;margin:12px 0 3px;color:#1c1917">$1</h3>');
-  t = t.replace(/^## (.+)$/gm, '<h2 style="font-size:15px;font-weight:700;margin:14px 0 5px;color:#1c1917;border-bottom:1px solid #ede8e0;padding-bottom:4px">$1</h2>');
-  t = t.replace(/^# (.+)$/gm, '<h1 style="font-size:18px;font-weight:800;margin:16px 0 6px;color:#1c1917">$1</h1>');
-  t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  t = t.replace(/\*(.+?)\*/g, '<em>$1</em>');
-  t = t.replace(/`([^`]+)`/g, '<code style="background:#f0ede8;padding:1px 5px;border-radius:4px;font-family:monospace;font-size:.82em;color:#9a3412">$1</code>');
-  t = t.replace(/^[-*] (.+)$/gm, '<li style="margin:2px 0 2px 16px;line-height:1.7">$1</li>');
-  t = t.replace(/\n\n/g, '<br/><br/>').replace(/\n/g, '<br/>');
+function mdown(text){
+  if(!text)return'';
+  var t=xe(text);
+  t=t.replace(/^### (.+)$/gm,'<h3 style="font-size:14px;font-weight:700;margin:12px 0 3px;color:#1c1917">$1</h3>');
+  t=t.replace(/^## (.+)$/gm,'<h2 style="font-size:15px;font-weight:700;margin:14px 0 5px;color:#1c1917;border-bottom:1px solid #ede8e0;padding-bottom:4px">$1</h2>');
+  t=t.replace(/^# (.+)$/gm,'<h1 style="font-size:18px;font-weight:800;margin:16px 0 6px;color:#1c1917">$1</h1>');
+  t=t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  t=t.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  t=t.replace(/`([^`]+)`/g,'<code style="background:#f0ede8;padding:1px 5px;border-radius:4px;font-family:monospace;font-size:.82em;color:#9a3412">$1</code>');
+  t=t.replace(/^[-*] (.+)$/gm,'<li style="margin:2px 0 2px 16px;line-height:1.7">$1</li>');
+  t=t.replace(/\n\n/g,'<br/><br/>').replace(/\n/g,'<br/>');
   return t;
 }
 
-function parseResp(text) {
-  var m = text.match(/```(\w+)?\r?\n?([\s\S]*?)```/);
-  if (m) return { has: true, before: text.slice(0, m.index).trim(), code: m[2].trim(), lang: (m[1] || 'html').toLowerCase(), after: text.slice(m.index + m[0].length).trim() };
-  return { has: false, before: text.trim(), code: '', lang: '', after: '' };
+function parseR(text){
+  var m=text.match(/```(\w+)?\r?\n?([\s\S]*?)```/);
+  if(m)return{has:true,before:text.slice(0,m.index).trim(),code:m[2].trim(),lang:(m[1]||'html').toLowerCase(),after:text.slice(m.index+m[0].length).trim()};
+  return{has:false,before:text.trim(),code:'',lang:'',after:''};
 }
 
-var LANG_ICON = { html: 'web', javascript: 'js', js: 'js', jsx: 'react', css: 'css', svg: 'svg', python: 'py' };
-var LANG_LABEL = { html: 'HTML App', javascript: 'JavaScript', js: 'JavaScript', jsx: 'React App', css: 'CSS', python: 'Python', svg: 'SVG' };
+var ICONS={html:'&#127760;',javascript:'&#9889;',js:'&#9889;',jsx:'&#8859;',css:'&#127912;',python:'&#128013;',svg:'&#128444;'};
+var NAMES={html:'HTML App',javascript:'JavaScript',js:'JavaScript',jsx:'React App',css:'CSS',python:'Python',svg:'SVG'};
 
-function addMsg(role, content, animate) {
-  var w = document.querySelector('.wlc'); if (w) w.remove();
-  var inner = document.getElementById('inner');
-  var row = document.createElement('div');
-  row.className = 'mr' + (role === 'user' ? ' u' : '');
-  if (animate !== false) row.style.animation = 'fadein .25s ease';
-
-  if (role === 'user') {
-    row.innerHTML = '<div class="mw uw"><div class="ub">' + esc(content) + '</div></div>';
-  } else {
-    var p = parseResp(content);
-    var html = '<div class="av">&#10022;</div><div class="mw"><div class="ml">Assistant</div>';
-    html += '<div class="at">' + safeMd(p.before) + '</div>';
-    if (p.has && p.code) {
-      var lines = p.code.split('\n').length;
-      var lbl = LANG_LABEL[p.lang] || p.lang.toUpperCase();
-      html += '<div class="apc"><div class="apch"><div class="apci">' + (p.lang === 'html' ? '&#127760;' : '&#9889;') + '</div>';
-      html += '<div class="apcm"><div class="apcn">' + lbl + '</div><div class="apcl">' + lines + ' lines</div></div></div>';
-      html += '<div class="apcb"><button class="apbp" data-action="preview">Preview App</button><button class="apbc" data-action="code">View Code</button></div></div>';
+function addMsg(role,content,anim){
+  var w=document.querySelector('.wlc');if(w)w.remove();
+  var inner=document.getElementById('inner');
+  var row=document.createElement('div');
+  row.className='mr'+(role==='user'?' u':'');
+  if(anim!==false)row.style.animation='fadein .25s ease';
+  if(role==='user'){
+    row.innerHTML='<div class="mw uw"><div class="ub">'+xe(content)+'</div></div>';
+  }else{
+    var p=parseR(content);
+    var html='<div class="av">&#10022;</div><div class="mw"><div class="ml">Assistant</div>';
+    html+='<div class="at">'+mdown(p.before)+'</div>';
+    if(p.has&&p.code){
+      var lines=p.code.split('\n').length;
+      var ico=ICONS[p.lang]||'&#128196;';
+      var nm=NAMES[p.lang]||p.lang.toUpperCase();
+      html+='<div class="apc"><div class="apch"><div class="apci">'+ico+'</div><div class="apcm"><div class="apcn">'+nm+'</div><div class="apcl">'+lines+' lines</div></div></div><div class="apcb"><button class="apbp" data-action="pv">Preview App</button><button class="apbc" data-action="co">View Code</button></div></div>';
     }
-    if (p.after) html += '<div class="at" style="margin-top:8px">' + safeMd(p.after) + '</div>';
-    html += '</div>';
-    row.innerHTML = html;
-    if (p.has && p.code) {
-      var cc = p.code, cl = p.lang;
-      var btns = row.querySelectorAll('[data-action]');
-      btns.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          if (btn.getAttribute('data-action') === 'preview') openPv(cc, cl);
-          else openCv(cc, cl);
-        });
+    if(p.after)html+='<div class="at" style="margin-top:8px">'+mdown(p.after)+'</div>';
+    html+='</div>';
+    row.innerHTML=html;
+    if(p.has&&p.code){
+      var cc=p.code,cl=p.lang;
+      var btns=row.querySelectorAll('[data-action]');
+      btns.forEach(function(b){
+        b.addEventListener('click',function(){if(b.dataset.action==='pv')openPv(cc,cl);else openCv(cc,cl);});
       });
     }
   }
-  inner.appendChild(row);
-  row.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  return row;
+  inner.appendChild(row);row.scrollIntoView({behavior:'smooth',block:'end'});return row;
 }
 
-function buildSrc(lang, code) {
-  if (lang === 'html') return code;
-  if (lang === 'javascript' || lang === 'js') return '<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;padding:20px;font-family:system-ui,sans-serif;background:#fff}</style></head><body><script>' + code + '<\/script></body></html>';
-  if (lang === 'css') return '<!DOCTYPE html><html><head><style>body{padding:24px;font-family:system-ui,sans-serif;background:#f9f9f9}' + code + '</style></head><body><h1>Heading</h1><p>Paragraph.</p></body></html>';
-  if (lang === 'svg') return '<!DOCTYPE html><html><body style="margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f0f0f0">' + code + '</body></html>';
-  return '<!DOCTYPE html><html><body><pre style="padding:20px;font-family:monospace">' + esc(code) + '</pre></body></html>';
+function buildSrc(lang,code){
+  if(lang==='html')return code;
+  if(lang==='javascript'||lang==='js')return'<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;padding:20px;font-family:system-ui,sans-serif;background:#fff}</style></head><body><script>'+code+'<\/script></body></html>';
+  if(lang==='css')return'<!DOCTYPE html><html><head><style>body{padding:24px;font-family:system-ui,sans-serif;background:#f9f9f9}'+code+'</style></head><body><h1>Heading</h1><p>Paragraph.</p></body></html>';
+  return'<!DOCTYPE html><html><body><pre style="padding:20px;font-family:monospace">'+xe(code)+'</pre></body></html>';
 }
+function openPv(code,lang){CODE=code;CLANG=lang;document.getElementById('pvt').textContent='Live Preview';document.getElementById('pframe').srcdoc=buildSrc(lang,code);document.getElementById('pframe').style.display='block';document.getElementById('cview').style.display='none';document.getElementById('tpv').classList.add('act');document.getElementById('tco').classList.remove('act');document.getElementById('pv').classList.add('open');}
+function openCv(code,lang){CODE=code;CLANG=lang;document.getElementById('pvt').textContent='Source Code';document.getElementById('cview').textContent=code;document.getElementById('cview').style.display='block';document.getElementById('pframe').style.display='none';document.getElementById('tco').classList.add('act');document.getElementById('tpv').classList.remove('act');document.getElementById('pv').classList.add('open');}
+function showTab(t){if(t==='p')openPv(CODE,CLANG);else openCv(CODE,CLANG);}
+function closePv(){document.getElementById('pv').classList.remove('open');}
+function copyCode(){if(!CODE)return;navigator.clipboard.writeText(CODE).then(function(){var b=document.getElementById('cpb');b.textContent='Copied!';setTimeout(function(){b.textContent='Copy';},2000);});}
 
-function openPv(code, lang) {
-  CODE = code; LANG = lang;
-  document.getElementById('pvt').textContent = 'Live Preview';
-  document.getElementById('pf').srcdoc = buildSrc(lang, code);
-  document.getElementById('pf').style.display = 'block';
-  document.getElementById('cv').style.display = 'none';
-  document.getElementById('tp').classList.add('act');
-  document.getElementById('tc').classList.remove('act');
-  document.getElementById('pv').classList.add('open');
-}
-function openCv(code, lang) {
-  CODE = code; LANG = lang;
-  document.getElementById('pvt').textContent = 'Source Code';
-  document.getElementById('cv').textContent = code;
-  document.getElementById('cv').style.display = 'block';
-  document.getElementById('pf').style.display = 'none';
-  document.getElementById('tc').classList.add('act');
-  document.getElementById('tp').classList.remove('act');
-  document.getElementById('pv').classList.add('open');
-}
-function showTab(t) { if (t === 'p') openPv(CODE, LANG); else openCv(CODE, LANG); }
-function closePv() { document.getElementById('pv').classList.remove('open'); }
-function copyCode() {
-  if (!CODE) return;
-  navigator.clipboard.writeText(CODE).then(function() {
-    var b = document.getElementById('cpb');
-    b.textContent = 'Copied!';
-    setTimeout(function() { b.textContent = 'Copy'; }, 2000);
-  }).catch(function() {});
-}
+function ar(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';}
+function us(){var v=(document.getElementById('mi').value||'').trim();document.getElementById('sb2').className=v&&!BUSY?'on':'';}
 
-function ar(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 140) + 'px'; }
-function us() {
-  var v = document.getElementById('mi').value.trim();
-  document.getElementById('sb2').className = (v && !BUSY) ? 'on' : '';
-}
+async function go(text){
+  var mi=document.getElementById('mi');
+  var t=(text!==undefined?text:(mi.value||'')).trim();
+  if(!t||BUSY)return;
+  mi.value='';mi.style.height='auto';us();
+  if(!HIST.length){CHATS[CID]={id:CID,title:t.slice(0,52),messages:[],ts:Date.now(),userId:UID};document.getElementById('ctitle').textContent=t.slice(0,38);}
+  HIST.push({role:'user',content:t});
+  addMsg('user',t,true);
+  BUSY=true;
+  var sbtn=document.getElementById('sb2');sbtn.innerHTML='<div class="sp"></div>';sbtn.className='';
 
-async function go(text) {
-  var mi = document.getElementById('mi');
-  var t = (text !== undefined ? text : mi.value).trim();
-  if (!t || BUSY) return;
-  mi.value = ''; mi.style.height = 'auto'; us();
-
-  if (!HIST.length) {
-    CHATS[CID] = { id: CID, title: t.slice(0, 52), messages: [], ts: Date.now(), userId: UID };
-    document.getElementById('ctitle').textContent = t.slice(0, 40);
-  }
-  HIST.push({ role: 'user', content: t });
-  addMsg('user', t, true);
-  BUSY = true;
-  var sbtn = document.getElementById('sb2');
-  sbtn.innerHTML = '<div class="sp"></div>';
-  sbtn.className = '';
-
-  // Trim large code from history to prevent token overflow
-  var apiHist = HIST.slice(0, -1).map(function(m) {
-    var c = m.content;
-    if (m.role === 'assistant' && c.length > 2000) {
-      var p = parseResp(c);
-      return { role: 'assistant', content: (p.before || 'Built an app') + '\n[Code was ' + p.code.split('\n').length + ' lines of ' + p.lang + ']' + (p.after ? '\n' + p.after : '') };
-    }
-    return { role: m.role, content: m.content };
+  var apiH=HIST.slice(0,-1).map(function(m){
+    var c=m.content;
+    if(m.role==='assistant'&&c.length>2000){var p=parseR(c);return{role:'assistant',content:(p.before||'Built an app')+'\n[Code: '+p.code.split('\n').length+' lines of '+p.lang+']'+(p.after?'\n'+p.after:'')};}
+    return{role:m.role,content:m.content};
   });
-  apiHist.push({ role: 'user', content: t });
+  apiH.push({role:'user',content:t});
 
-  // Add streaming placeholder row
-  var w = document.querySelector('.wlc'); if (w) w.remove();
-  var inner = document.getElementById('inner');
-  var row = document.createElement('div');
-  row.className = 'mr';
-  row.style.animation = 'fadein .25s ease';
-  row.innerHTML = '<div class="av">&#10022;</div><div class="mw"><div class="ml" id="slbl">Assistant <span class="cur"></span></div><div class="at" id="stxt" style="color:#a0998f;font-style:italic">Thinking...</div></div>';
-  inner.appendChild(row);
-  row.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  var w=document.querySelector('.wlc');if(w)w.remove();
+  var inner=document.getElementById('inner');
+  var row=document.createElement('div');row.className='mr';row.style.animation='fadein .25s ease';
+  row.innerHTML='<div class="av">&#10022;</div><div class="mw"><div class="ml" id="slbl">Assistant <span class="cur"></span></div><div class="at" id="stxt" style="color:#a0998f;font-style:italic">Thinking</div></div>';
+  inner.appendChild(row);row.scrollIntoView({behavior:'smooth',block:'end'});
+  var stxt=document.getElementById('stxt');
+  var acc='';
 
-  var stxt = document.getElementById('stxt');
-  var accumulated = '';
-
-  try {
-    var res = await fetch(WURL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: MODEL, max_tokens: 8000, system: getSYSTEM(), messages: apiHist })
-    });
-
-    if (!res.ok) {
-      var ed = await res.json().catch(function() { return { error: { message: 'HTTP ' + res.status } }; });
-      throw new Error((ed.error && ed.error.message) || 'HTTP ' + res.status);
-    }
-
-    var reader = res.body.getReader();
-    var decoder = new TextDecoder();
-    var buf = '';
-
-    while (true) {
-      var chunk = await reader.read();
-      if (chunk.done) break;
-      buf += decoder.decode(chunk.value, { stream: true });
-      var lines = buf.split('\n');
-      buf = lines.pop() || '';
-      for (var i = 0; i < lines.length; i++) {
-        var line = lines[i];
-        if (!line.startsWith('data:')) continue;
-        var raw = line.slice(5).trim();
-        if (!raw || raw === '[DONE]') continue;
-        try {
-          var evt = JSON.parse(raw);
-          if (evt.type === 'content_block_delta' && evt.delta && evt.delta.type === 'text_delta') {
-            accumulated += evt.delta.text;
-            var hasCode = accumulated.indexOf('```') > -1;
-            if (hasCode) {
-              var preText = accumulated.split('```')[0].trim();
-              // Only show text — NEVER inject code into DOM during streaming
-              stxt.innerHTML = (preText ? safeMd(preText) : '') + '<div style="margin-top:10px;background:#f0ede8;border:1px dashed #c9b8a0;border-radius:10px;padding:12px 14px;font-size:12.5px;color:#9a7a5a">Building app... please wait</div>';
-            } else {
-              stxt.innerHTML = safeMd(accumulated) + '<span class="cur"></span>';
-            }
-            stxt.scrollIntoView({ behavior: 'smooth', block: 'end' });
-          }
-        } catch (e) {}
+  try{
+    var res=await fetch(WURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:MODEL,max_tokens:8000,system:SYSTEM,messages:apiH})});
+    if(!res.ok){var ed=await res.json().catch(function(){return{error:{message:'HTTP '+res.status}};});throw new Error((ed.error&&ed.error.message)||'HTTP '+res.status);}
+    var reader=res.body.getReader(),dec=new TextDecoder(),buf='';
+    while(true){
+      var ch=await reader.read();if(ch.done)break;
+      buf+=dec.decode(ch.value,{stream:true});
+      var lines=buf.split('\n');buf=lines.pop()||'';
+      for(var i=0;i<lines.length;i++){
+        var line=lines[i];if(!line.startsWith('data:'))continue;
+        var raw=line.slice(5).trim();if(!raw||raw==='[DONE]')continue;
+        try{var evt=JSON.parse(raw);if(evt.type==='content_block_delta'&&evt.delta&&evt.delta.type==='text_delta'){acc+=evt.delta.text;var hasCode=acc.indexOf('```')>-1;stxt.innerHTML=hasCode?mdown(acc.split('```')[0].trim())+'<div style="margin-top:10px;background:#f0ede8;border:1px dashed #c9b8a0;border-radius:10px;padding:12px;font-size:12.5px;color:#9a7a5a">Building app code</div>':mdown(acc)+'<span class="cur"></span>';stxt.scrollIntoView({behavior:'smooth',block:'end'});}}catch(ex){}
       }
     }
-
-    // Stream done — remove placeholder, render final message properly
     row.remove();
-    addMsg('assistant', accumulated, true);
-    HIST.push({ role: 'assistant', content: accumulated });
+    addMsg('assistant',acc,true);
+    HIST.push({role:'assistant',content:acc});
     saveChat();
-
-    // Auto-open preview panel
-    var fp = parseResp(accumulated);
-    if (fp.has && fp.code) openPv(fp.code, fp.lang);
-
-  } catch (err) {
-    stxt.innerHTML = '<span style="color:#ef4444">Error: ' + esc(err.message) + '</span>';
-    document.getElementById('slbl').textContent = 'Assistant';
-    HIST.pop();
-  }
-
-  BUSY = false;
-  sbtn.textContent = 'up';
-  us();
+    var fp=parseR(acc);if(fp.has&&fp.code)openPv(fp.code,fp.lang);
+  }catch(ex){stxt.innerHTML='<span style="color:#ef4444">Error: '+xe(ex.message)+'</span>';document.getElementById('slbl').innerHTML='Assistant';HIST.pop();}
+  BUSY=false;sbtn.textContent='&#8593;';us();
 }
 </script>
 </body>
