@@ -563,8 +563,26 @@ function renderMd(text) {
 }
 
 function parseResponse(text) {
-  var m = text.match(/```(\w+)?\r?\n?([\s\S]*?)```/);
-  if (m) return { has: true, before: text.slice(0, m.index).trim(), code: m[2].trim(), lang: (m[1] || 'html').toLowerCase(), after: text.slice(m.index + m[0].length).trim() };
+  if (!text) return { has: false, before: '', code: '', lang: '', after: '' };
+  // Try several fence formats Claude may return
+  var patterns = [
+    /```(\w+)[^\n]*\n([\s\S]*?)```/,   // ```html\n...code...\n```
+    /```(\w+)?\s*\n([\s\S]*?)```/,      // ```html \n...code...```
+    /```(\w*)\r?\n([\s\S]*?)```/,       // Windows line endings
+    /```(\w*)([\s\S]*?)```/             // no newline at all
+  ];
+  for (var i = 0; i < patterns.length; i++) {
+    var m = text.match(patterns[i]);
+    if (m && m[2] && m[2].trim().length > 10) {
+      return {
+        has: true,
+        before: text.slice(0, m.index).trim(),
+        code: m[2].trim(),
+        lang: (m[1] || 'html').toLowerCase().trim() || 'html',
+        after: text.slice(m.index + m[0].length).trim()
+      };
+    }
+  }
   return { has: false, before: text.trim(), code: '', lang: '', after: '' };
 }
 
@@ -770,10 +788,13 @@ async function sendMessage(preset) {
             accumulated += evt.delta.text;
             var hasCode = accumulated.indexOf('```') > -1;
             if (hasCode) {
-              streamText.innerHTML = renderMd(accumulated.split('```')[0].trim()) +
-                '<div style="margin-top:10px;background:#f0ede8;border:1px dashed #c9b8a0;border-radius:10px;padding:12px;font-size:12.5px;color:#9a7a5a">&#9881; Building app...</div>';
+              var preText = accumulated.split('```')[0].trim();
+              streamText.innerHTML = (preText ? '<div class="ai-text">' + renderMd(preText) + '</div>' : '') +
+                '<div style="margin-top:10px;background:#1c1917;border-radius:12px;padding:14px 16px;color:#fff;font-size:13px;display:flex;align-items:center;gap:10px">' +
+                '<div style="width:18px;height:18px;border:2px solid #c96442;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0"></div>' +
+                'Building your app &mdash; this may take 30-60 seconds...</div>';
             } else {
-              streamText.innerHTML = renderMd(accumulated) + '<span class="typing-cursor"></span>';
+              streamText.innerHTML = '<div class="ai-text">' + renderMd(accumulated) + '<span class="typing-cursor"></span></div>';
             }
             streamText.scrollIntoView({ behavior: 'smooth', block: 'end' });
           }
